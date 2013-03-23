@@ -1,7 +1,10 @@
 package development;
 import rxtxrobot.*;
+import java.util.*;
 
-public class DemoRFID {
+public class DemoRFID 
+{
+
 
 	/**
 	 * @param args
@@ -13,19 +16,33 @@ public class DemoRFID {
 		r.setVerbose(true);
 		r.connect();
 		runRobot(r);
+		r.close();
 	}
 	static void runRobot(RXTXRobot r)
 	{
-		int ticks = calculateTicks();
-//		the ticks are chosen arbitrarily.  
-		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
+		RFIDSensor s = new RFIDSensor;
+		s.connect();
+		while(!(s.hasTag))
+		{
+			int ticks = 200;
+//			the ticks are chosen arbitrarily(for now).  
+			r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
+		}
+		String tag = s.getTag;
+		System.out.println(tag);
+		Course course;
+		switch(tag) 
+		{
+			case: 1
+				course = new LiberiaCourse;
+				break;
+			case: 2
+				course = new KenyaCourse;
+				break;
+			case: 3
+				course = new DjiboutiCourse;
+				break;
+		}
+		System.out.println(course.toString());
 	}
-	static int calculateTicks()
-	{
-		int distance = 36;
-//		the motors speed range [-255 - 255] just represent binary 
-		
-		return 0;
-	}
-
 }
