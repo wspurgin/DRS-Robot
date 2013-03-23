@@ -16,13 +16,13 @@ Measurements are in inches.
 		super();
 		this.mazeGap = 20;
 		this.mazeWallLength = 60;
-		this.courseName = "Fish Town, Liberia";
-		this.obstacleName = "Simple Maze of two walls which are " + mazeWallLength + "\" long, parallel to and " + mazeGap / 2 + "\" away\nfrom the center line on opposite sides of the field.";
-		this.challenge = "Ground Level"
+		setCourseName("Fish Town, Liberia");
+		setObstacleName("Simple Maze of two walls which are " + mazeWallLength + "\" long, parallel to and " + mazeGap / 2 + "\" away\nfrom the center line on opposite sides of the field.");
+		setChallenge("Ground Level");
 	}
 	public String toString()
 	{
-		String toString = this.courseName + ":\n with a " + obstacleName + "\nThe challenge is a Well placed at:" + this.challenge + ".";
+		String toString = getCourseName() + ":\n with a " + getObstacleName() + "\nThe challenge is a Well placed at:" + getChallenge() + ".";
 		return toString;
 	}
 }

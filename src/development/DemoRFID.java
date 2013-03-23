@@ -29,18 +29,22 @@ public class DemoRFID
 			r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
 		}
 		String tag = s.getTag;
-		System.out.println(tag);
-		Course course;
-		switch(tag) 
+		s.close;
+		int tagNumber = Integer.parseInt(tag)
+;		Course course;
+		switch(tagNumber) 
 		{
-			case: 1
-				course = new LiberiaCourse;
+			case 1:
+				course = new LiberiaCourse();
 				break;
-			case: 2
-				course = new KenyaCourse;
+			case 2:
+				course = new KenyaCourse();
 				break;
-			case: 3
-				course = new DjiboutiCourse;
+			case 3:
+				course = new DjiboutiCourse();
+				break;
+			default:
+				course = null;
 				break;
 		}
 		System.out.println(course.toString());
