@@ -39,7 +39,7 @@ public class DemoRemediation
 		int mixSpeed = 255; // Max
 		double doseNeeded = 0.0;
 		
-		while(pH < 7 || pH > 7.5)
+		while(pH < 6.8 || pH > 7.2)
 		{
 			doseNeeded = calculateDose(pH);
 			
