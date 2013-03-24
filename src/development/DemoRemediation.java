@@ -8,14 +8,17 @@ import rxtxrobot.RXTXRobot;
  * double measureTempInC();
  */
 
-public class DemoRemediation extends Course
+public class DemoRemediation
 {
 	RXTXRobot r;
+	Course course;
 	
-	public DemoRemediation()
+	public DemoRemediation(Course c)
 	{
 		r = new RXTXRobot();
 		r.setPort("/dev/tty.usbmodem1a1221");
+		
+		course = c;
 	}
 	
 	boolean testNRemediate()
@@ -25,7 +28,7 @@ public class DemoRemediation extends Course
 	    int numReRun = 3;
 	    //max speed is 255
 	    
-	    String challenge = getChallenge();
+	    String challenge = course.getChallenge();
 	    
 	    int case1 = 1;
 	    int case2 = 2;
