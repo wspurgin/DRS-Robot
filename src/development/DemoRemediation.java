@@ -47,7 +47,7 @@ public class DemoRemediation
 	{
 		int mixSpeed = 255; // Max
 		
-		while(pH < 6.8 || pH > 7.2)
+		while(pH < 7 || pH > 7.5)
 		{
 			
 			// Dose water
