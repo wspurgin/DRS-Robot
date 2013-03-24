@@ -4,40 +4,45 @@ import java.util.*;
 
 public class DemoRFID 
 {
-
-
-	/**
-	 * @param args
-	 */
-	public static void main(String[] args) 
+	// Robot and RFID sensor
+	RXTXRobot r;
+	RFIDSensor s;
+	
+	// Constructor
+	public DemoRFID()
 	{
-		RXTXRobot r = new RXTXRobot();
+		r = new RXTXRobot();
 		r.setPort("/dev/tty.usbmodem1a1221");
 		r.setHasEncodedMotors(true);
-		r.connect();
-		runRobot(r);
-		r.close();
-	}
-	static void runRobot(RXTXRobot r)
-	{
-		RFIDSensor s = new RFIDSensor;
+		
+		RFIDSensor s = new RFIDSensor();
 		s.setPort("/dev/tty.usbserial-A901JX0L");
+	}
+	
+	public void run()
+	{
+		r.connect();
 		s.connect();
-		while(!(s.hasTag))
+		
+		while(!(s.hasTag()))
 		{
 			int ticks = 200;
 //			the ticks are chosen arbitrarily(for now).  
 			r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
 		}
-		String tag = s.getTag;
-		s.close;
+		
+		String tag = s.getTag();
+		s.close();
 		System.out.println(tag);
+		
 		int tagNumber = 0;
+		
 		if (tag.equals("67007BB62B81")) 
 		{
 			tagNumber = 1;
 		}
 ;		Course course;
+
 		switch(tagNumber) 
 		{
 			case 1:
@@ -54,5 +59,7 @@ public class DemoRFID
 				break;
 		}
 		System.out.println(course.toString());
+		
+		r.close();
 	}
 }
