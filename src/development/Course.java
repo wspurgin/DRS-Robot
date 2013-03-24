@@ -12,5 +12,36 @@ public abstract class Course
 		obstacleName = "";
 		challenge = "";
 	}
+	
+	public void setCourseName(String s)
+	{
+		courseName = s;
+	}
+	
+	public void setObstacleName(String s)
+	{
+		obstacleName = s;
+	}
+	
+	public void setChallenge(String s)
+	{
+		challenge = s;
+	}
+	
+	public String getCourseName()
+	{
+		return courseName;
+	}
+	
+	public String getObstacleName()
+	{
+		return obstacleName;
+	}
+	
+	public String getChallenge()
+	{
+		return challenge;
+	}
+	
   	public abstract String toString();
 }
