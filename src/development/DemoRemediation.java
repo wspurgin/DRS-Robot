@@ -1,12 +1,4 @@
-import rxtxrobot.RXTXRobot;
-
-/*
- * need to implement the following:
- * String moveSensor(int caseNum); returns String with sensor move location
- * int measureTurbidity(); //returns turbidity in NTU
- * double measurepH(int pH);
- * double measureTempInC();
- */
+import rxtxrobot.*;
 
 public class DemoRemediation
 {
@@ -21,85 +13,85 @@ public class DemoRemediation
 		course = c;
 	}
 	
-	boolean testNRemediate()
+	// Test the water for values of turbidity, temperature, and pH
+	public boolean test()
 	{
-	    boolean fail = false;
-	    int mixerSpeed = 255;
-	    int numReRun = 3;
-	    //max speed is 255
-	    
 	    String challenge = course.getChallenge();
+	   
+	    moveArm(challenge);
 	    
-	    int case1 = 1;
-	    int case2 = 2;
-	    int case3 = 3;
-	    
-	    if (challenge.equals("Below Ground"))
-	        moveSensor(case1);
-	    else if (challenge.equals("Above Ground"))
-	        moveSensor(case3);
-	    else if (challenge.equals("Ground Level"))
-	        moveSensor(case2);
-	    else
-	        return fail;
-	    
-	    //create Scanner object in case
-	    //need to type in given starting pH
-	    double temperature = measureTempInC();
+	    int turbidity = measureTurbidity();
+	    double temperature = measureTemp();
 	    double pH = measurepH();
-	    double doseNeeded = calculateDose(pH);
 	    
-	    r.setMixerSpeed(mixerSpeed);//from RXTXRobot class
-	    //DETERMINE WHEN TO STOP MIXER
-	    stopMixer();
+	    System.out.println("Turbidity: " + turbidity);
+	    System.out.println("Temperature: " + temperature + " degrees Celsius");
+	    System.out.println("pH: " + pH);
 	    
-	    double pHFinal = measurepH(); //should be in 7-7.5 range
-	    double[] pHs = new double[numReRun];
+		remediate(pH);
 	    
-	    for (int rerun = 0; rerun < numReRun; rerun++)
-	        pHs[rerun] = measurepH();
-	    
+	    return true;
+	}
+	
+	// Adds neutralizing solution to water until pH becomes neutral
+	public boolean remediate(double pH)
+	{
+		int mixSpeed = 255; // Max
+		double doseNeeded = 0.0;
+		
+		while(pH < 7 || pH > 7.5)
+		{
+			doseNeeded = calculateDose(pH);
+			
+			// Dose water
+			
+			r.setMixerSpeed(mixSpeed);
+			r.runMixer(r.MOTOR3, 500);
+		    
+		    pH = measurepH();
+		}
+		
 	    return true;
 	}
 
 	// Returns the temperature of a liquid in Celsius
-	double measureTempInC()
+	private double measureTemp()
 	{
 		return 0.0;
 	}
 	
 	// Returns the pH of a liquid
-	double measurepH()
+	private double measurepH()
 	{
 		return 0.0;
 	}
 	
 	// Returns turbidity in NTU
-	int measureTurbidity()
+	private int measureTurbidity()
 	{
 		return 0;
 	}
 	
 	// Calculates the amount of remediating liquid necessary
-	double calculateDose(double d)
+	private double calculateDose(double d)
 	{
 		return 0.0;
 	}
 	
-	// Determines when to stop the mixer
-	void stopMixer()
-	{
-		
-	}
-	
 	// Returns String with sensor move location
-	String moveSensor(int caseNum)
+	private void moveArm(String challenge)
 	{
-		return "";
-	}
-	
-	public String toString()
-	{
-		return "";
+		if (challenge.equals("Below Ground"))
+		{
+			
+		}
+	    else if (challenge.equals("Above Ground"))
+	    {
+	    	
+	    }
+	    else if (challenge.equals("Ground Level"))
+	    {
+	    	
+	    }
 	}
 }
