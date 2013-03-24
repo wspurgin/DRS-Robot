@@ -26,7 +26,7 @@ public class DemoRemediation
 	{
 	    String challenge = course.getChallenge();
 	   
-	    moveArmDown(challenge);
+	    moveArm(challenge);
 	    
 	    turbidity = measureTurbidity();
 	    temperature = measureTemp();
@@ -35,12 +35,10 @@ public class DemoRemediation
 	    System.out.println("The turbidity is " + turbidity + ".");
 	    System.out.println("The temperature is " + temperature + " degrees Celsius.");
 	    System.out.println("The pH is " + pH + ".");
-	    
-		remediate();
-		
-		moveArmUp(challenge);
-	    
-	    return true;	}
+	    remediate();
+	
+	    return true;	
+	}
 	
 	// Adds neutralizing solution to water until pH becomes neutral
 	public boolean remediate(double pH)
@@ -77,7 +75,10 @@ public class DemoRemediation
 	// Returns the pH of a liquid
 	private double measurepH()
 	{
-		return 0.0;
+		double E = 0; // E(0) - E -- this is the value we read in
+		double K = (1.985/96485.339924)*2.30;
+		
+		return E/(K*temperature);
 	}
 	
 	// Returns String with sensor move location
@@ -87,36 +88,16 @@ public class DemoRemediation
 		{
 			
 		}
-	    else if (challenge.equals("Above Ground"))
-	    {
+	    	else if (challenge.equals("Above Ground"))
+	    	{
+	  	  	
+	    	}
+	    	else if (challenge.equals("Ground Level"))
+	    	{
 	    	
-	    }
-	    else if (challenge.equals("Ground Level"))
-	    {
-	    	
-	    }
-	    else
-	    	return false;
-		
-		return true;
-	}
-	
-	private boolean moveArmUp(String challenge)
-	{
-		if (challenge.equals("Below Ground"))
-		{
-			
-		}
-	    else if (challenge.equals("Above Ground"))
-	    {
-	    	
-	    }
-	    else if (challenge.equals("Ground Level"))
-	    {
-	    	
-	    }
-	    else
-	    	return false;
+	   	}
+	   	else
+	    		return false;
 		
 		return true;
 	}
