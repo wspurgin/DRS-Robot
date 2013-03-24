@@ -12,8 +12,8 @@ public class DemoRFID
 	public static void main(String[] args) 
 	{
 		RXTXRobot r = new RXTXRobot();
-		r.setPort("/dev/tty.usbmodem1411");
-		r.setVerbose(true);
+		r.setPort("/dev/tty.usbmodem1a1221");
+		r.setHasEncodedMotors(true);
 		r.connect();
 		runRobot(r);
 		r.close();
@@ -21,6 +21,7 @@ public class DemoRFID
 	static void runRobot(RXTXRobot r)
 	{
 		RFIDSensor s = new RFIDSensor;
+		s.setPort("/dev/tty.usbserial-A901JX0L");
 		s.connect();
 		while(!(s.hasTag))
 		{
@@ -30,7 +31,12 @@ public class DemoRFID
 		}
 		String tag = s.getTag;
 		s.close;
-		int tagNumber = Integer.parseInt(tag)
+		System.out.println(tag);
+		int tagNumber = 0;
+		if (tag.equals("67007BB62B81")) 
+		{
+			tagNumber = 1;
+		}
 ;		Course course;
 		switch(tagNumber) 
 		{
@@ -44,7 +50,7 @@ public class DemoRFID
 				course = new DjiboutiCourse();
 				break;
 			default:
-				course = null;
+				course = new LiberiaCourse();
 				break;
 		}
 		System.out.println(course.toString());
