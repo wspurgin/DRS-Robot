@@ -1,62 +1,78 @@
 package development;
 import rxtxrobot.*;
+import java.util.*;
 
 public class DemoRemediation
 {
-	RXTXRobot r;
-	Course course;
-	int turbidity;
-	double temperature;
-	double pH;
+	private RXTXRobot r;
+    private Course course;
+    private String port;
+	private int turbidity;
+	private double temperature;
+	private double pH;
+    private boolean phIsNeatural
 	
 	public DemoRemediation(Course c)
 	{
 		r = new RXTXRobot();
-		r.setPort("/dev/tty.usbmodem1a1221");
+        System.out.println("Enter connection port: ");
+        Scanner s = new Scanner(System in);
+        this.port = s.nextLine();
+		r.setPort(this.port);
 		
-		course = c;
+		this.course = c;
 
-		turbidity = 0;
-		temperature = 0.0;
-		pH = 0.0;
+		this.turbidity = 0;
+		this.temperature = 0.0;
+		this.pH = 0.0;
+        
+        this.phIsNeatural = false;
 	}
 	
 	// Test the water for values of turbidity, temperature, and pH
-	public boolean test()
+	public void test()
 	{
+        r.connect();
 	    String challenge = course.getChallenge();
 	   
 	    moveArm(challenge);
 	    
-	    turbidity = measureTurbidity();
-	    temperature = measureTemp();
-	    pH = measurePH();
+	    this.turbidity = measureTurbidity();
+	    this.temperature = measureTemp();
+	    this.pH = measurePH();
+        if (this.pH >= 7.0 && this.pH <= 7.5)
+            this.phIsNeatural = true;
 	    
 	    System.out.println("The turbidity is " + turbidity + ".");
 	    System.out.println("The temperature is " + temperature + " degrees Celsius.");
 	    System.out.println("The pH is " + pH + ".");
-	    remediate();
+//      A test will normally call the remediate method, but for the sake of this
+//      demo we will not call the remediate method since each one much be done
+//      statically
+        
+//	    remediate(this.pH);
+        r.close();
 	
-	    return true;	
 	}
 	
 	// Adds neutralizing solution to water until pH becomes neutral
-	public boolean remediate(double pH)
+	public void remediate(double pH)
 	{
+        this.pH = pH;
+        r.connect()
 		int mixSpeed = 255; // Max
 		
-		while(pH < 7 || pH > 7.5)
+		while(!phIsNeatural)
 		{
-			
+            r.sleep(500);
 			// Dose water
-			
 			r.setMixerSpeed(mixSpeed);
 			r.runMixer(r.MOTOR3, 500);
+            r.stopMixer(r.MOTOR3);
 		    
 		    pH = measurePH();
 		}
-		
-	    return true;
+        r.close();
 	}
 
 	// Returns the temperature of a liquid in Celsius
@@ -78,11 +94,11 @@ public class DemoRemediation
 		double E = 0; // E(0) - E -- this is the value we read in
 		double K = (1.985/96485.339924)*2.30;
 		
-		return E/(K*temperature);
+		return E/(K*this.temperature);
 	}
 	
 	// Returns String with sensor move location
-	private boolean moveArmDown(String challenge)
+	private void moveArmDown(String challenge)
 	{
 		if (challenge.equals("Below Ground"))
 		{
@@ -96,9 +112,5 @@ public class DemoRemediation
 	    	{
 	    	
 	   	}
-	   	else
-	    		return false;
-		
-		return true;
 	}
 }

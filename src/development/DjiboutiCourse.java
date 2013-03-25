@@ -20,7 +20,7 @@ Measurements are in inches.
 	}
 	public String toString()
 	{
-		String toString = getCourseName() + ":\n with a " + getObstacleName() + "\nThe challenge is a Well placed at:" + getChallenge() + ".";
+		String toString = getCourseName() + ":\nwith a " + getObstacleName() + "\nThe challenge is a Well placed at: " + getChallenge() + ".";
 		return toString;
 	}
 }
