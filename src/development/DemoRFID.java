@@ -5,18 +5,24 @@ import java.util.*;
 public class DemoRFID 
 {
 	// Robot and RFID sensor
-	RXTXRobot r;
-	RFIDSensor s;
+	private RXTXRobot r;
+	private RFIDSensor s;
+    private String mainPort;
+    private final String RFID-PORT = "/dev/tty.usbserial-A901JX0L";
 	
 	// Constructor
 	public DemoRFID()
 	{
 		r = new RXTXRobot();
-		r.setPort("/dev/tty.usbmodem1a1221");
+        System.out.println("Enter main connection port: ");
+        Scanner s = new Scanner(System.int);
+        mainPort = s.nextLine();
+        s.close();
+		r.setPort(port);
 		r.setHasEncodedMotors(true);
 		
 		RFIDSensor s = new RFIDSensor();
-		s.setPort("/dev/tty.usbserial-A901JX0L");
+		s.setPort(DemoRFID.RFID-PORT);
 	}
 	
 	public void run()
