@@ -7,8 +7,8 @@ public class DemoRFID
 	// Robot and RFID sensor
 	private RXTXRobot r;
 	private RFIDSensor sensor;
-    private String mainPort;
-    private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
+	private String mainPort;
+	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	
 	// Constructor
 	public DemoRFID()
@@ -28,17 +28,17 @@ public class DemoRFID
 	public void run()
 	{
 		r.connect();
-		s.connect();
+		sensor.connect();
 		
-		while(!(s.hasTag()))
+		while(!(sensor.hasTag()))
 		{
 			int ticks = 200;
 //			the ticks are chosen arbitrarily(for now).  
 			r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
 		}
 		
-		String tag = s.getTag();
-		s.close();
+		String tag = sensor.getTag();
+		sensor.close();
 		System.out.println(tag);
 		
 		int tagNumber = 0;
