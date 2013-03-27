@@ -30,13 +30,12 @@ public class DemoRFID
 		r.connect();
 		s.connect();
 		
+		r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, ticks);
 		while(!(s.hasTag()))
 		{
-			int ticks = 200;
-//			the ticks are chosen arbitrarily(for now).  
-			r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks);
+			r.sleep(200);
 		}
-		
+		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, ticks);
 		String tag = s.getTag();
 		s.close();
 		System.out.println(tag);
