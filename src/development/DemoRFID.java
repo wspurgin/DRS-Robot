@@ -29,25 +29,18 @@ public class DemoRFID
 	{
 		r.connect();
 		sensor.connect();
-		
-<<<<<<< HEAD
+
 		r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, ticks);
-		while(!(s.hasTag()))
-=======
 		while(!(sensor.hasTag()))
->>>>>>> 7f66ed1c7b6974d1c6f6487e9077b0d620c4d21b
 		{
 			r.sleep(200);
 		}
-<<<<<<< HEAD
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, ticks);
 		String tag = s.getTag();
 		s.close();
-=======
-		
 		String tag = sensor.getTag();
 		sensor.close();
->>>>>>> 7f66ed1c7b6974d1c6f6487e9077b0d620c4d21b
+		
 		System.out.println(tag);
 		
 		int tagNumber = 0;
