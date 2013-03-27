@@ -30,14 +30,16 @@ public class DemoRFID
 		r.connect();
 		sensor.connect();
 
+		int ticks = 0;
+
 		r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, ticks);
 		while(!(sensor.hasTag()))
 		{
 			r.sleep(200);
 		}
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, ticks);
-		String tag = s.getTag();
-		s.close();
+		String tag = sensor.getTag();
+		sensor.close();
 		String tag = sensor.getTag();
 		sensor.close();
 		

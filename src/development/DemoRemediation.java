@@ -205,8 +205,6 @@ public class DemoRemediation
 			}
 				
 		}
-				
-		return "Sensors deployed";
 	}
 	
 	// Removes the sensors from the water (reverse of moveSensor() method)
@@ -274,7 +272,5 @@ public class DemoRemediation
 				r.sleep(200);
 			}
 		}
-		
-		return "Sensors retracted";
 	}
 }
