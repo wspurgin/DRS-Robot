@@ -96,10 +96,26 @@ public class DemoRemediation
 	}
 
 	// Returns the temperature of a liquid in Celsius
-	public double measureTemp()
+	public int measureTemp()
 	{
-		r.refreshDigitalPins();
-		return r.getTemperature();
+		int perm = 0;
+		int count = 0;
+		while(true)
+		{
+			if(r.getTemperature() == perm)
+			{
+				count++;
+				if(count == 10)
+					break;
+			}
+			else
+			{
+				perm = r.getTemperature();
+				count = 0;
+			}
+			r.sleep(500);
+		}
+		return perm;
 	}
 	
 	// Returns turbidity in NTU
