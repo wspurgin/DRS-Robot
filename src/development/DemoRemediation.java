@@ -121,23 +121,26 @@ public class DemoRemediation
 	// Returns turbidity in NTU
 	public int measureTurbidity()
 	{
-		return 0;
+		int E = 0; // Measured value - volts at NTU of 0, calculated when calibrating
+		int slope = 0; // Calculate when calibrating
+		
+		return E / slope;
 	}
 
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double E = 0; // E(0) - E -- this is the value we read in
+		double E = 0; // E(0) - E (value we read in)
 		double T = this.temperature + 273.15;
 		double K = (8.3145*T/96485.339924)*2.30;
 		
 		return E / K;
 	}
 	
-	// Calculate E necessary for calibration of pH sensor
+	// Calculate E(0) necessary for calibration of pH sensor
 	public double calculateE(double pH)
 	{
-		double E = 0;
+		double E = 0; // getAnalogPin(int)?
 		
 		double T = this.temperature + 273.15;
 		double K = (8.3145*T/96485.339924)*2.30;
