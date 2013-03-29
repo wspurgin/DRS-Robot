@@ -129,9 +129,20 @@ public class DemoRemediation
 	{
 		double E = 0; // E(0) - E -- this is the value we read in
 		double T = this.temperature + 273.15;
-		double K = (8.3145/96485.339924)*2.30;
+		double K = (8.3145*T/96485.339924)*2.30;
 		
-		return E / (K * T);
+		return E / K;
+	}
+	
+	// Calculate E necessary for calibration of pH sensor
+	public double calculateE(double pH)
+	{
+		double E = 0;
+		
+		double T = this.temperature + 273.15;
+		double K = (8.3145*T/96485.339924)*2.30;
+		
+		return  E + K*pH;
 	}
 	
 	// Returns String with sensor move location
