@@ -128,9 +128,10 @@ public class DemoRemediation
 	public double measurePH()
 	{
 		double E = 0; // E(0) - E -- this is the value we read in
-		double K = (1.985/96485.339924)*2.30;
+		double T = this.temperature + 273.15;
+		double K = (8.3145/96485.339924)*2.30;
 		
-		return E / (K * this.temperature);
+		return E / (K * T);
 	}
 	
 	// Returns String with sensor move location
