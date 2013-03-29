@@ -37,8 +37,6 @@ public class DemoSquare
 		r.connect();
 		sensor.connect();
 		
-		int count = 0;
-		
 		r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 		
 		// Moves forward while no tag has been read
@@ -47,7 +45,6 @@ public class DemoSquare
 		while(!(sensor.hasTag()))
 		{
 			r.sleep(200);
-			count++;
 		}
 		
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);

@@ -1,5 +1,4 @@
 package development;
-import java.util.*;
 
 public abstract class Course
 {
