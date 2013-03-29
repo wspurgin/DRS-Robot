@@ -2,6 +2,7 @@ import java.util.*;
 
 public abstract class Course
 {
+	private int courseNumber;
 	private String courseName;
 	private String obstacleName;
 	private String challenge;
@@ -27,7 +28,10 @@ public abstract class Course
 	{
 		challenge = s;
 	}
-	
+	public void setCourseNumber(int courseNumber)
+  	{
+  		this.courseNumber = courseNumber;
+  	}
 	public String getCourseName()
 	{
 		return courseName;
@@ -42,6 +46,9 @@ public abstract class Course
 	{
 		return challenge;
 	}
-	
+	public int getCourseNumber()
+  	{
+  		return this.courseNumber;
+  	}
   	public abstract String toString();
 }

@@ -17,6 +17,7 @@ Measurements are in inches.
 		setCourseName("Dadaab, Kenya");
 		setObstacleName("Wall that runs along the center line, and has a " + wallGap + "\" gap in the middle of the wall.");
 		setChallenge("Below Ground");
+		setCourseNumber(3);
 	}
 	public String toString()
 	{

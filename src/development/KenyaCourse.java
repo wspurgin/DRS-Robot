@@ -15,6 +15,7 @@ Measurements are in inches.
 		setCourseName("Dadaab, Kenya");
 		setObstacleName("Low Bar between 12\" to 20\" high");
 		setChallenge("Above Ground");
+		setCourseNumber(2);
 	}
 	public String toString()
 	{

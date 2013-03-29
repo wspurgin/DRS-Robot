@@ -19,6 +19,7 @@ Measurements are in inches.
 		setCourseName("Fish Town, Liberia");
 		setObstacleName("Simple Maze of two walls which are " + mazeWallLength + "\" long, parallel to and " + mazeGap / 2 + "\" away\nfrom the center line on opposite sides of the field.");
 		setChallenge("Ground Level");
+		setCourseNumber(1);
 	}
 	public String toString()
 	{
