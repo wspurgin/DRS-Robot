@@ -1,5 +1,5 @@
-
-public class DjiboutCourse extends Course
+package development;
+public class DjiboutiCourse extends Course
 {
 /*
 this class is an extension of the base class Course. It is designed to 

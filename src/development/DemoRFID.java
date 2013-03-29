@@ -40,7 +40,7 @@ public class DemoRFID
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, ticks);
 		String tag = sensor.getTag();
 		sensor.close();
-		String tag = sensor.getTag();
+		tag = sensor.getTag();
 		sensor.close();
 		
 		System.out.println(tag);
@@ -51,7 +51,7 @@ public class DemoRFID
 		{
 			tagNumber = 1;
 		}
-;		Course course;
+		Course course;
 
 		switch(tagNumber) 
 		{
@@ -70,6 +70,12 @@ public class DemoRFID
 		}
 		System.out.println(course.toString());
 		
+		r.close();
+	}
+	
+	public void close()
+	{
+		r.moveBothServos(145, 0);
 		r.close();
 	}
 }

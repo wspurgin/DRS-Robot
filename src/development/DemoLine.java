@@ -40,4 +40,10 @@ public class DemoLine {
 		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, 10000, RXTXRobot.MOTOR2, 255, 10000);
 		r.close(); 
 	}
+	
+	public void close()
+	{
+		r.moveBothServos(145, 0);
+		r.close();
+	}
 }
