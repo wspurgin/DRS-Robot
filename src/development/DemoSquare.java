@@ -6,7 +6,6 @@ public class DemoSquare
 {
 	private RXTXRobot r;
 	private String port;
-	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	
 	// Constructor
 	public DemoSquare()
@@ -32,7 +31,7 @@ public class DemoSquare
 		r.connect();
 		
 		int ticks = 306313;	// Number of ticks necessary to move 2 feet
-		int turns = 2057; // Number of ticks necessary to turn at a 90 degree angle
+		int turns = 2059; // Number of ticks necessary to turn at a 90 degree angle
 		
 		// Square
 		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks); // Side
