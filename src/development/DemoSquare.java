@@ -6,7 +6,6 @@ public class DemoSquare
 {
 	private RXTXRobot r;
 	private String port;
-	private RFIDSensor sensor;
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	
 	// Constructor
@@ -22,34 +21,7 @@ public class DemoSquare
         this.port = s.nextLine();
 		r.setPort(this.port);
 		
-		sensor = new RFIDSensor();
-		sensor.setPort(RFID_PORT);
-		
 		s.close();
-	}
-	
-	// Counts number of ticks traveled in a distance (before stopped by RFID tag)
-	public int ticksIn()
-	{
-		//r.setPort(this.port);
-		r.setHasEncodedMotors(true);
-		r.connect();
-		sensor.connect();
-		
-		r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
-		
-		// Moves forward while no tag has been read
-		r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
-		
-		while(!(sensor.hasTag()))
-		{
-			r.sleep(200);
-		}
-		
-		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-		
-		System.out.println(r.getEncodedMotorPosition(RXTXRobot.MOTOR1) + " ticks in 2 feet.");
-		return r.getEncodedMotorPosition(RXTXRobot.MOTOR1);
 	}
 	
 	// Moves the robot in a square
@@ -76,7 +48,6 @@ public class DemoSquare
 	// Closes robot and sensor
 	public void close()
 	{
-		sensor.close();
 		r.close();
 	}
 }
