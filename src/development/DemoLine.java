@@ -37,7 +37,7 @@ public class DemoLine {
 //        a 90 degree left turn. NOTE: ticks chosen arbitrarily for now.
 		r.sleep(2000);
 		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, 5000, RXTXRobot.MOTOR2, -255, 5000);
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, 10000, RXTXRobot.MOTOR2, 255, 10000);
+		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, 255, 2055);
 		r.close(); 
 	}
 	
