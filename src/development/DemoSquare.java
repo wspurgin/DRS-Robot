@@ -21,7 +21,6 @@ public class DemoSquare
 		Scanner s = new Scanner(System.in);
         this.port = s.nextLine();
 		r.setPort(this.port);
-		r.connect();
 		
 		sensor = new RFIDSensor();
 		sensor.setPort(RFID_PORT);
@@ -32,7 +31,7 @@ public class DemoSquare
 	// Counts number of ticks traveled in a distance (before stopped by RFID tag)
 	public int ticksIn()
 	{
-		r.setPort(this.port);
+		//r.setPort(this.port);
 		r.setHasEncodedMotors(true);
 		r.connect();
 		sensor.connect();
@@ -40,7 +39,7 @@ public class DemoSquare
 		r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 		
 		// Moves forward while no tag has been read
-		r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 0);
+		r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
 		
 		while(!(sensor.hasTag()))
 		{
@@ -60,17 +59,18 @@ public class DemoSquare
 		r.setHasEncodedMotors(true);
 		r.connect();
 		
-		int ticks = 5000;	// Number of ticks necessary to move 2 feet
-		int turns = 10000; // Number of ticks necessary to turn at a 90 degree angle
+		int ticks = 306313;	// Number of ticks necessary to move 2 feet
+		int turns = 2057; // Number of ticks necessary to turn at a 90 degree angle
 		
 		// Square
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, ticks, RXTXRobot.MOTOR2, -255, ticks); // Side
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, turns, RXTXRobot.MOTOR2, 255, turns); // Turn
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, ticks, RXTXRobot.MOTOR2, -255, ticks); // Side
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, turns, RXTXRobot.MOTOR2, 255, turns); // Turn
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, ticks, RXTXRobot.MOTOR2, -255, ticks); // Side
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, turns, RXTXRobot.MOTOR2, 255, turns); // Turn
-		r.runEncodedMotor(RXTXRobot.MOTOR1, -255, ticks, RXTXRobot.MOTOR2, -255, ticks); // Side
+		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks); // Side
+		r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, 255, turns); // Turn
+		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks); // Side
+		r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, 255, turns); // Turn
+		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks); // Side
+		r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, 255, turns); // Turn
+		r.runEncodedMotor(RXTXRobot.MOTOR1, 255, ticks, RXTXRobot.MOTOR2, 255, ticks); // Side
+		//r.close();
 	}
 	
 	// Closes robot and sensor
