@@ -121,31 +121,19 @@ public class DemoRemediation
 	// Returns turbidity in NTU
 	public int measureTurbidity()
 	{
-		int E = 0; // Measured value - volts at NTU of 0, calculated when calibrating
-		int slope = 0; // Calculate when calibrating
-		
-		return E / slope;
+		int y = r.getAnalogPin(2).getValue();
+		int b = 0;
+		int m = 0;
+		return (y - b) / m;
 	}
 
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double E = 0; // E(0) - E (value we read in)
-		double T = this.temperature + 273.15;
-		double K = (8.3145*T/96485.339924)*2.30;
-		
-		return E / K;
-	}
-	
-	// Calculate E(0) necessary for calibration of pH sensor
-	public double calculateE(double pH)
-	{
-		double E = 0; // getAnalogPin(int)?
-		
-		double T = this.temperature + 273.15;
-		double K = (8.3145*T/96485.339924)*2.30;
-		
-		return  E + K*pH;
+		double y = r.getAnalogPin(1).getValue();
+		double b = 0.0;
+		double m = 0.0;
+		return (y - b) / m;
 	}
 	
 	// Returns String with sensor move location
