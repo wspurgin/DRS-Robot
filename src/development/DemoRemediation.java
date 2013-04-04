@@ -121,18 +121,55 @@ public class DemoRemediation
 	// Returns turbidity in NTU
 	public int measureTurbidity()
 	{
-		int y = r.getAnalogPin(2).getValue();
+
 		int b = 0;
-		int m = 0;
+		int m = 1;
+			
+		int y = 0;
+		int count = 0;
+		while(true)
+		{
+			if(r.getAnalogPin(5).getValue() == y)
+			{
+				count++;
+				if(count == 10)
+					break;
+			}
+			else
+			{
+				y = r.getAnalogPin(5).getValue();
+				count = 0;
+			}
+			r.sleep(500);
+		}	
+		
 		return (y - b) / m;
 	}
 
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double y = r.getAnalogPin(1).getValue();
-		double b = 0.0;
-		double m = 0.0;
+		double b = 1258.66666666667;
+		double m = -94;
+		
+		double y = 0;
+		int count = 0;
+		while(true)
+		{
+			if(r.getAnalogPin(5).getValue() == y)
+			{
+				count++;
+				if(count == 10)
+					break;
+			}
+			else
+			{
+				y = r.getAnalogPin(5).getValue();
+				count = 0;
+			}
+			r.sleep(500);
+		}
+		
 		return (y - b) / m;
 	}
 	
