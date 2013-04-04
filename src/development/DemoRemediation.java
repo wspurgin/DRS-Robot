@@ -102,6 +102,7 @@ public class DemoRemediation
 		int count = 0;
 		while(true)
 		{
+			r.refreshDigitalPins();
 			if(r.getTemperature() == perm)
 			{
 				count++;
