@@ -125,29 +125,46 @@ public class DemoRemediation
 	// Returns turbidity in NTU
 	public int measureTurbidity()
 	{
-        
-		int b = 0;
-		int m = 1;
-        
+		double b = 368.333333333;
+		double m = -.0788288288;
+		
+		ArrayList<Integer> turb = new ArrayList<Integer>(); 
+		ArrayList<Integer> frequency = new ArrayList<Integer>();
+		
 		int y = 0;
-		int count = 0;
-		while(true)
+		for(int i = 0; i < 20; i++)
 		{
-			if(r.getAnalogPin(5).getValue() == y)
+			r.refreshAnalogPins();
+			y = r.getAnalogPin(1).getValue();
+			if(!turb.contains(y))
 			{
-				count++;
-				if(count == 10)
-					break;
+				turb.add(y);
+				frequency.add(1);
 			}
 			else
 			{
-				y = r.getAnalogPin(5).getValue();
-				count = 0;
+				int index = turb.indexOf(y);
+				frequency.set(index, frequency.get(index)+1);
 			}
-			r.sleep(500);
+			r.sleep(200);
 		}
 		
-		return (y - b) / m;
+		int count = 0;
+		y = 0;
+		for(int i = 0; i < frequency.size(); i++)
+		{
+			int freq = frequency.get(i);
+			int t = turb.get(i);
+			
+			if(freq >= 4)
+			{
+				y = y + (t*freq);
+				count += freq;
+			}
+		}
+		y /= count;
+		
+		return (int)((y - b) / m);
 	}
     
 	// Returns the pH of a liquid
