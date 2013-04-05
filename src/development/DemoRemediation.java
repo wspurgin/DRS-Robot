@@ -10,7 +10,7 @@ public class DemoRemediation
 	private int turbidity;
 	private double temperature;
 	private double pH;
-	private boolean phIsNeatural;
+	private boolean phIsNeutral;
 	
 	// Constructor
 	public DemoRemediation()
@@ -49,7 +49,7 @@ public class DemoRemediation
 		this.temperature = 0.0;
 		this.pH = 0.0;
         
-        	this.phIsNeatural = false;
+        	this.phIsNeutral = false;
 	}
 	
 	// Test the water for values of turbidity, temperature, and pH
@@ -63,38 +63,38 @@ public class DemoRemediation
 	    
 	    // Determine if pH is neutral
         if (this.pH >= 7.0 && this.pH <= 7.5)
-            this.phIsNeatural = true;
+            this.phIsNeutral = true;
 	    
         // Prints out turbidity, temperature, and pH to the screen
 	    System.out.println("The turbidity is " + turbidity + ".");
 	    System.out.println("The temperature is " + temperature + " degrees Celsius.");
 	    System.out.println("The pH is " + pH + ".");
 	    
-	    // A test will normally call the remediate method, but for the sake of this
-	    // demo we will not call the remediate method since each one much be done statically
-	    // ^^ What test?
-	    remediate(this.pH);
+	    remediate();
 	}
 	
 	// Adds neutralizing solution to water until pH becomes neutral
-	public void remediate(double pH)
+	public void remediate()
 	{
-        this.pH = pH;
-		int mixSpeed = 255; // Max
+		int mixSpeed = 255; // Max	
+		double v = ((.75*Math.pow(10, -1*this.pH))-(7.5*Math.pow(10, -8)))/(9.999*Math.pow(10,-8));
+		v *= .80;
 		
 		// Loops while the pH is not neutral
-		while(!phIsNeatural)
+		while(!this.phIsNeutral)
 		{
-            r.sleep(500);
+            		r.sleep(500);
 			// Dose water
+			r.runMotor(RXTXRobot.MOTOR3, 255, 30000);
+
 			r.setMixerSpeed(mixSpeed);
 			r.runMixer(RXTXRobot.MOTOR4, 500);
-            r.stopMixer(RXTXRobot.MOTOR4);
-            
-            r.runMotor(RXTXRobot.MOTOR3, 255, 30000);
-            
+            		r.stopMixer(RXTXRobot.MOTOR4);
+
+		    this.pH = measurePH();
 		    
-		    pH = measurePH();
+		    if(this.pH >= 7.0 && this.pH <= 7.5)
+		    	this.phIsNeutral = true;
 		}
 	}
 
