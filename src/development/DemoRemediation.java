@@ -88,8 +88,11 @@ public class DemoRemediation
             r.sleep(500);
 			// Dose water
 			r.setMixerSpeed(mixSpeed);
-			r.runMixer(RXTXRobot.MOTOR3, 500);
-            r.stopMixer(RXTXRobot.MOTOR3);
+			r.runMixer(RXTXRobot.MOTOR4, 500);
+            r.stopMixer(RXTXRobot.MOTOR4);
+            
+            r.runMotor(RXTXRobot.MOTOR3, 255, 30000);
+            
 		    
 		    pH = measurePH();
 		}

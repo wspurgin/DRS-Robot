@@ -9,6 +9,9 @@ public class DemoRFID
 	private RFIDSensor sensor;
 	private String mainPort;
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
+	private String Liberia = "6A003E4EA6BC";
+	private String Kenya = "6A003E834B9C";
+	private String Djibouti = "6A003E6E477D";
 	
 	// Constructor
 	public DemoRFID()
@@ -51,8 +54,19 @@ public class DemoRFID
 		{
 			tagNumber = 1;
 		}
-		Course course;
+		Course course = null;
+		
+		if(tag.equals(Liberia))
+			course = new LiberiaCourse();
+		else if(tag.equals(Kenya))
+			course = new KenyaCourse();
+		else if(tag.equals(Djibouti))
+			course = new DjiboutiCourse();
 
+		else 
+			System.out.println("Error: RFID tag not recognized");
+		
+		/*
 		switch(tagNumber) 
 		{
 			case 1:
@@ -68,6 +82,8 @@ public class DemoRFID
 				course = new LiberiaCourse();
 				break;
 		}
+		*/
+		
 		System.out.println(course.toString());
 		
 		r.close();
