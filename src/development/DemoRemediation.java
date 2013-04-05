@@ -76,21 +76,32 @@ public class DemoRemediation
 	// Adds neutralizing solution to water until pH becomes neutral
 	public void remediate()
 	{
-		int mixSpeed = 255; // Max
-		double v = ((.75*Math.pow(10, -1*this.pH))-(7.5*Math.pow(10, -8)))/(9.999*Math.pow(10,-8));
-		v *= .80;
+		this.pH = measurePH();
+		int mixSpeed = 255; // Max	
+		double volume = (750*this.pH)/11;
+		volume *= .80;
+		volume = 30000 + (volume - 2.4) * (25 / 3);
+		int time = (int)(volume / 1000);
+		
+//		// Run loop for time needed to add 80% of calculated value
+//		r.runMotor(RXTXRobot.MOTOR3, 255, 0);
+//		for(int i = 0; i < time; i++)
+//		{
+//			r.sleep(1000);
+//		}
+//		r.runMotor(RXTXRobot.MOTOR3, 0, 0);
 		
 		// Loops while the pH is not neutral
 		while(!this.phIsNeutral)
 		{
-            r.sleep(500);
-			// Dose water
-			r.runMotor(RXTXRobot.MOTOR3, 255, 30000);
+			r.runMotor(RXTXRobot.MOTOR3, 255, 0);
+            r.sleep(5000);
+            r.runMotor(RXTXRobot.MOTOR3, 0, 0);
             
 			r.setMixerSpeed(mixSpeed);
 			r.runMixer(RXTXRobot.MOTOR4, 500);
             r.stopMixer(RXTXRobot.MOTOR4);
-            
+		    
 		    this.pH = measurePH();
 		    
 		    if(this.pH >= 7.0 && this.pH <= 7.5)
