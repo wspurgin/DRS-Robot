@@ -54,10 +54,10 @@ public class DemoRemediation
 	
 	// Test the water for values of turbidity, temperature, and pH
 	public void test()
-	{
+	{   
 	    moveSensor();
 	    // Measure turbidity, temperature, and pH
-	    this.turbidity = measureTurbidity();
+	    //this.turbidity = measureTurbidity();
 	    this.temperature = measureTemp();
 	    this.pH = measurePH();
 	    
@@ -70,6 +70,9 @@ public class DemoRemediation
 	    System.out.println("The temperature is " + temperature + " degrees Celsius.");
 	    System.out.println("The pH is " + pH + ".");
 	    
+	    // A test will normally call the remediate method, but for the sake of this
+	    // demo we will not call the remediate method since each one much be done statically
+	    // ^^ What test?
 	    remediate();
 	}
 	
@@ -77,8 +80,9 @@ public class DemoRemediation
 	public void remediate()
 	{
 		this.pH = measurePH();
-		int mixSpeed = 255; // Max	
-		double volume = (750*this.pH)/11;
+		int mixSpeed = 100; // Max
+		double volumeOriginal = 750;
+		double volume = ((Math.pow(10, -1*this.pH) - Math.pow(10, -7))*volumeOriginal) / (Math.pow(10, -3) - Math.pow(10, -7));
 		volume *= .80;
 		volume = 30000 + (volume - 2.4) * (25 / 3);
 		int time = (int)(volume / 1000);
@@ -108,7 +112,7 @@ public class DemoRemediation
 		    	this.phIsNeutral = true;
 		}
 	}
- 
+
 	// Returns the temperature of a liquid in Celsius
 	public int measureTemp()
 	{
@@ -148,13 +152,24 @@ public class DemoRemediation
 	}
 	
 	// Returns turbidity in NTU
-	public int measureTurbidity()
+	public double measureTurbidity()
 	{	
-		double b = 368.333333333;
-		double m = -.0788288288;
+		double a = .0005922;
+		double b = .3487;
+		double c = 450.605;
 		double y = findAverageValue(1);
+		c = c - y;
 		
-		return (int)((y - b) / m);
+		int result = (int)((b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+		
+		if(y < 400 || result == 0)
+		{
+			a = -.10081;
+			b = 445.82;
+			result = (int)((y - b) / a);
+		}
+		
+		return result;
 	}
 
 	// Returns the pH of a liquid
@@ -172,7 +187,7 @@ public class DemoRemediation
 	{
 		double y = 0;
 		// If pinNum is 2, run code for temperature
-		if(pinNum != 2)
+		if(pinNum == 2)
 		{
 			ArrayList<Double> list = new ArrayList<Double>(); 
 			ArrayList<Integer> frequency = new ArrayList<Integer>();
@@ -193,7 +208,7 @@ public class DemoRemediation
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				r.sleep(200);
+				r.sleep(100);
 			}
 			
 			int count = 0;
@@ -217,11 +232,12 @@ public class DemoRemediation
 			ArrayList<Double> list = new ArrayList<Double>(); 
 			ArrayList<Integer> frequency = new ArrayList<Integer>();
 			
-			// Loop 50 times
-			for(int i = 0; i < 50; i++)
+			// Loop 200 times
+			for(int i = 0; i < 200; i++)
 			{
 				r.refreshAnalogPins();
 				y = r.getAnalogPin(pinNum).getValue();
+				
 				// If the list is does not contain value, add, else increment frequency
 				if(!list.contains(y))
 				{
@@ -233,7 +249,7 @@ public class DemoRemediation
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				r.sleep(200);
+				r.sleep(100);
 			}
 			
 			int count = 0;
@@ -253,16 +269,18 @@ public class DemoRemediation
 			y /= (double)count;
 		}
 		
+		System.out.println("\n" + y);
+		
 		return y;
 	}
 	
 	// Returns String with sensor move location
 	// BECAUSE we cannot measure the height of the water with the robot during its independent
-	// navigation, we must hard code the different angles for each case. therefore, any numbers
+	// navigation, we must hard code the different angles for each case. therefore, any numbers 
 	// changed here, change it in the removeSensors() method, too.
 	public void moveSensor()
 	{
-        
+			
 		// Below ground
 		// Robot needs to be about 29.2 cm away from the center of the water.
 		if(this.course.getCourseNumber() == 1)
@@ -275,19 +293,19 @@ public class DemoRemediation
 				r.sleep(50);
 				if(i > 90)
 					r.moveServo(RXTXRobot.SERVO2, i);
-                r.sleep(50);
+					r.sleep(50);
 			}
-            
+				
 		}
 		// Ground
-		// Since the water is at ground level, there shouldn't be a need to take
-		// multiple steps to angle the sensor perpendicularly over. However, the robot
+		// Since the water is at ground level, there shouldn't be a need to take 
+		// multiple steps to angle the sensor perpendicularly over. However, the robot 
 		// needs to be 29.28 cm from the water in order for this to work.
 		if(this.course.getCourseNumber() == 2)
 		{
 			// Get the arm in the correct general location, the closer
 			// it gets, the more slowly the arm will move
-			for(int i = 145; i > 50; i--)
+			for(int i = 145; i > 40; i--)
 			{
 				
 				r.moveServo(RXTXRobot.SERVO1, i);
@@ -303,20 +321,22 @@ public class DemoRemediation
 			// Get the arm in the correct general location, the closer
 			// it gets to the water, the more slowly the arm will move
 			
-			for(int i = 145; i > 90; i--)
+			
+			for(int i = 145; i > 90; i--) 
 			{
 				// Moves main arm directly over the water, 66 degrees
-				r.moveServo(RXTXRobot.SERVO2, i);
+				r.moveBothServos(i, i); 
 				r.sleep(50);
-				
-				if(i >= 100)
-					r.moveServo(RXTXRobot.SERVO1, i);
 			}
-			
-			for(int i = 90; i > 40; i--)
+			for(int i = 90; i > 10; i--)
 			{
 				r.moveServo(RXTXRobot.SERVO2, i);
-				r.sleep(50);
+				r.sleep(70);
+			}
+			for(int i = 90; i > 75; i--)
+			{
+				r.moveServo(RXTXRobot.SERVO2, i);
+				r.sleep(70);
 			}
 		}
 	}
@@ -326,48 +346,63 @@ public class DemoRemediation
 	{
 		if(this.course.getCourseNumber() == 1)
 		{
+			int j;
+			j= 90;
 			//Returns arm to 145, 145
 			for(int i = 20; i <= 145; i++)
 			{
 				r.moveServo(RXTXRobot.SERVO1, i);
 				r.sleep(50);
-			}
-		}
+				if(i > 90) 
+				{
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
+					j++;
+				}
+			}	
+		}	
 		// Ground
 		if(this.course.getCourseNumber() == 2)
-		{
-			//Returns package to 145, 145
-			for(int i = 50; i <= 145; i++)
-			{
-				r.moveServo(RXTXRobot.SERVO1, i);
-				r.sleep(50);
-			}
-		}
-		// Above ground
-		if(this.course.getCourseNumber() == 3)
 		{
 			int j;
 			j= 40;
 			//Returns package to 145, 145
-			for(int i = 100; i <= 145; i++)
+			for(int i = 20; i <= 145; i++)
 			{
 				r.moveServo(RXTXRobot.SERVO1, i);
 				r.sleep(50);
-				if(i > 100)
+				if(i > 40) 
 				{
 					r.moveServo(RXTXRobot.SERVO2, j);
 					r.sleep(50);
 					j++;
 				}
 			}
-            
+		}
+		// Above ground
+		if(this.course.getCourseNumber() == 3)
+		{
+			int j;
+			j= 10;
+			//Returns package to 145, 145
+			for(int i = 75; i <= 145; i++)
+			{
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
+				if(i > 10) 
+				{
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
+					j++;
+				}
+			}
 		}
 	}
 	//This method will be used to close all the devices that are connected
 	//in the constructor of this class.
 	public void close()
 	{
-		r.moveBothServos(20, 145);
+		r.moveBothServos(145, 0);
 		r.close();
 	}
 }
