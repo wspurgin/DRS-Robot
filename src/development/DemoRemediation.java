@@ -108,15 +108,24 @@ public class DemoRemediation
 		    	this.phIsNeutral = true;
 		}
 	}
-    
+ 
 	// Returns the temperature of a liquid in Celsius
 	public int measureTemp()
 	{
 		int perm = 0;
+		int notStable = 0;
 		int count = 0;
+		
+		// Loop until temperature stabilizes
 		while(true)
 		{
 			r.refreshDigitalPins();
+			notStable++;
+			
+			// If temperature has not stabilized after 100 iterations, break
+			if(notStable > 100)
+				break;
+			
 			if(r.getTemperature() == perm)
 			{
 				count++;
@@ -128,81 +137,123 @@ public class DemoRemediation
 				perm = r.getTemperature();
 				count = 0;
 			}
-			r.sleep(500);
+			r.sleep(200);
 		}
+		
+		// If temperature did not stabilize after 100 iterations, use weighted average
+		if(notStable > 100)
+			perm = (int)findAverageValue(2);
+		
 		return perm;
 	}
 	
 	// Returns turbidity in NTU
 	public int measureTurbidity()
-	{
+	{	
 		double b = 368.333333333;
 		double m = -.0788288288;
-		
-		ArrayList<Integer> turb = new ArrayList<Integer>(); 
-		ArrayList<Integer> frequency = new ArrayList<Integer>();
-		
-		int y = 0;
-		for(int i = 0; i < 20; i++)
-		{
-			r.refreshAnalogPins();
-			y = r.getAnalogPin(1).getValue();
-			if(!turb.contains(y))
-			{
-				turb.add(y);
-				frequency.add(1);
-			}
-			else
-			{
-				int index = turb.indexOf(y);
-				frequency.set(index, frequency.get(index)+1);
-			}
-			r.sleep(200);
-		}
-		
-		int count = 0;
-		y = 0;
-		for(int i = 0; i < frequency.size(); i++)
-		{
-			int freq = frequency.get(i);
-			int t = turb.get(i);
-			
-			if(freq >= 4)
-			{
-				y = y + (t*freq);
-				count += freq;
-			}
-		}
-		y /= count;
+		double y = findAverageValue(1);
 		
 		return (int)((y - b) / m);
 	}
-    
+
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
 		double b = 1258.66666666667;
 		double m = -94;
-		
-		double y = 0;
-		int count = 0;
-		while(true)
-		{
-			if(r.getAnalogPin(5).getValue() == y)
-			{
-				count++;
-				if(count == 10)
-					break;
-			}
-			else
-			{
-				y = r.getAnalogPin(5).getValue();
-				count = 0;
-			}
-			r.sleep(500);
-		}
+		double y = findAverageValue(5);
 		
 		return (y - b) / m;
+	}
+	
+	// Calculate the weighted average of a value read for sensor based off pin number
+	private double findAverageValue(int pinNum)
+	{
+		double y = 0;
+		// If pinNum is 2, run code for temperature
+		if(pinNum != 2)
+		{
+			ArrayList<Double> list = new ArrayList<Double>(); 
+			ArrayList<Integer> frequency = new ArrayList<Integer>();
+			
+			// Loop 50 times
+			for(int i = 0; i < 50; i++)
+			{
+				r.refreshDigitalPins();
+				y = r.getTemperature();
+				// If the list is does not contain value, add, else increment frequency
+				if(!list.contains(y))
+				{
+					list.add(y);
+					frequency.add(1);
+				}
+				else
+				{
+					int index =	list.indexOf(y);
+					frequency.set(index, frequency.get(index)+1);
+				}
+				r.sleep(200);
+			}
+			
+			int count = 0;
+			y = 0;
+			// Loop through frequencies and add values to y if their frequencies are greater than 4
+			for(int i = 0; i < frequency.size(); i++)
+			{
+				int freq = frequency.get(i);
+				double val = list.get(i);
+				
+				if(freq >= 4)
+				{
+					y = y + (val*freq);
+					count += freq;
+				}
+			}
+			y /= (double)count;
+		}
+		else
+		{
+			ArrayList<Double> list = new ArrayList<Double>(); 
+			ArrayList<Integer> frequency = new ArrayList<Integer>();
+			
+			// Loop 50 times
+			for(int i = 0; i < 50; i++)
+			{
+				r.refreshAnalogPins();
+				y = r.getAnalogPin(pinNum).getValue();
+				// If the list is does not contain value, add, else increment frequency
+				if(!list.contains(y))
+				{
+					list.add(y);
+					frequency.add(1);
+				}
+				else
+				{
+					int index =	list.indexOf(y);
+					frequency.set(index, frequency.get(index)+1);
+				}
+				r.sleep(200);
+			}
+			
+			int count = 0;
+			y = 0;
+			// Loop through frequencies and add values to y if their frequencies are greater than 4
+			for(int i = 0; i < frequency.size(); i++)
+			{
+				int freq = frequency.get(i);
+				double val = list.get(i);
+				
+				if(freq >= 4)
+				{
+					y = y + (val*freq);
+					count += freq;
+				}
+			}
+			y /= (double)count;
+		}
+		
+		return y;
 	}
 	
 	// Returns String with sensor move location
