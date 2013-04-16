@@ -25,6 +25,7 @@ public class Navigator
 	public void setUp()
 	{
 		this.orient(this.NORTH);
+		this.findRFID();
 	}
 	public void orient(int direction)
 	{

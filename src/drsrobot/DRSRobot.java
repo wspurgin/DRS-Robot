@@ -22,21 +22,24 @@ public class DRSRobot
 		Navigator n = new Navigator(this.r);
 		n.setUp();
 		n.goToWell();
-//		Remediator d = new Remediator(this.r);
-//		remediator code to follow
+
+		Remediator remediator = new Remediator(r, this.courseNumber);
+		remediator.moveSensor();
+		remediator.test();
+		remediator.removeSensor();
 	}
 	public void close()
 	{
 		this.r.close();
 	}
 	public int getCourseNumber() {
-		return courseNumber;
+		return this.courseNumber;
 	}
 	public void setCourseNumber(int courseNumber) {
 		this.courseNumber = courseNumber;
 	}
 	public RXTXRobot getR() {
-		return r;
+		return this.r;
 	}
 	public void setR(RXTXRobot r) {
 		this.r = r;
