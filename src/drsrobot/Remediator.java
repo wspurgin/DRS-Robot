@@ -107,7 +107,7 @@ public class Remediator
 				perm = this.r.getTemperature();
 				count = 0;
 			}
-			this.r.sleep(200);
+			this.r.sleep(50);
 		}
 		
 		// If temperature did not stabilize after 100 iterations, use weighted average
@@ -161,8 +161,8 @@ public class Remediator
 			ArrayList<Double> list = new ArrayList<Double>(); 
 			ArrayList<Integer> frequency = new ArrayList<Integer>();
 			
-			// Loop 50 times
-			for(int i = 0; i < 50; i++)
+			// Loop 200 times
+			for(int i = 0; i < 200; i++)
 			{
 				this.r.refreshDigitalPins();
 				y = this.r.getTemperature();
@@ -177,7 +177,7 @@ public class Remediator
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				this.r.sleep(100);
+				this.r.sleep(50);
 			}
 			
 			int count = 0;
@@ -218,7 +218,7 @@ public class Remediator
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				this.r.sleep(100);
+				this.r.sleep(50);
 			}
 			
 			int count = 0;
