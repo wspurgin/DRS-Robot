@@ -141,11 +141,14 @@ public class Remediator
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double b = 1258.66666666667;
-		double m = -94;
+		double a = 0.0006181;
+		double b = -.77799;
+		double R = 8.3145;
+		double F = 96485.339924;
+		double T = this.temperature + 273.15;
 		double y = this.findAverageValue(5);
 		
-		return (y - b) / m;
+		return -(((a * y + b) * F) / (R * T * 2.3));
 	}
 	
 	// Calculate the weighted average of a value read for sensor based off pin number
