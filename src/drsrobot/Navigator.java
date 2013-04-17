@@ -29,9 +29,9 @@ public class Navigator
 	}
 	public void orient(int direction)
 	{
-//		Takes priming read of the bump sensors. The Robot will move accordingly to
-//		which bump sensor is engaged. Note that if for some reason the boolean
-//		bumpSensorEngaged is true. The Robot will not turn
+        //		Takes priming read of the bump sensors. The Robot will move accordingly to
+        //		which bump sensor is engaged. Note that if for some reason the boolean
+        //		bumpSensorEngaged is true. The Robot will not turn
 		if(!this.bumpSensorEngaged)
 			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, -255, 0);
 		else if(readBumpSensor(1))
@@ -58,8 +58,8 @@ public class Navigator
 			this.orient(direction);
 		}
 	}
-//	This method circles the perimeter of the playing field until the robot locates
-//	the RFID tag and assigns the courseNumber appropriately.
+    //	This method circles the perimeter of the playing field until the robot locates
+    //	the RFID tag and assigns the courseNumber appropriately.
 	public void findRFID()
 	{
 		this.sensor.connect();
@@ -97,29 +97,53 @@ public class Navigator
 	}
 	public void goToWell()
 	{
-		
+		if(this.courseNumber == 1 || this.courseNumber == 3)
+		{
+			orient(this.EAST);
+			moveForwardWithBumpSensors();
+			orient(this.NORTH);
+			moveForwardWithBumpSensors();
+			orient(this.WEST);
+			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+			while(this.r.getPing() < 20 && !this.readBumpSensor(1))
+			{
+				this.r.refreshAnalogPins();
+			}
+			/*
+			 *The robot will "travel" a bit as it turns allowing it to move a little forward.
+			 *This way (since the Ping sensor is in the middle on the right of the
+			 *robot) we will move completely through the gap.
+			 */
+			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 0, 10000);
+			orient(this.NORTH);
+		}
+		else if(this.courseNumber == 2)
+		{
+			orient(this.NORTH);
+		}
+		findWell();
 	}
-	public RXTXRobot getR() 
+	public RXTXRobot getR()
 	{
 		return r;
 	}
-	public void setR(RXTXRobot r) 
+	public void setR(RXTXRobot r)
 	{
 		this.r = r;
 	}
-	public int getNORTH() 
+	public int getNORTH()
 	{
 		return NORTH;
 	}
-	public int getEAST() 
+	public int getEAST()
 	{
 		return EAST;
 	}
-	public int getWEST() 
+	public int getWEST()
 	{
 		return WEST;
 	}
-	public int getSOUTH() 
+	public int getSOUTH()
 	{
 		return SOUTH;
 	}
@@ -150,5 +174,9 @@ public class Navigator
 				engaged = true;
 		}
 		return engaged;
+	}
+	private void findWell()
+	{
+		
 	}
 }

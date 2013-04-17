@@ -21,6 +21,7 @@ public class DRSRobot
 	{
 		Navigator n = new Navigator(this.r);
 		n.setUp();
+        this.courseNumber = n.getCourseNumber();
 		n.goToWell();
 
 		Remediator remediator = new Remediator(r, this.courseNumber);
