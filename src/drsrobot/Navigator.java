@@ -34,16 +34,18 @@ public class Navigator
         //		bumpSensorEngaged is true. The Robot will not turn
 		if(!this.bumpSensorEngaged)
 			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, -255, 0);
-		else if(readBumpSensor(1))
-			this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 1000);
-		else if(readBumpSensor(2))
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 1000);
+		else if(this.readBumpSensor())
+		{
+			this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 100);
+			if(this.readBumpSensor())
+				this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 200);
+		}
 		else
 			this.bumpSensorEngaged = false;
 		this.r.refreshAnalogPins();
 		while(this.r.readCompass() != direction)
 		{
-			if(this.readBumpSensor(1) || this.readBumpSensor(2))
+			if(this.readBumpSensor())
 			{
 				this.bumpSensorEngaged = true;
 				break;
@@ -66,7 +68,7 @@ public class Navigator
 		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
 		while(!this.sensor.hasTag())
 		{
-			if(this.readBumpSensor(1) || this.readBumpSensor(2))
+			if(this.readBumpSensor())
 			{
 				this.bumpSensorEngaged = true;
 				break;
@@ -105,7 +107,7 @@ public class Navigator
 			moveForwardWithBumpSensors();
 			orient(this.WEST);
 			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
-			while(this.r.getPing() < 20 && !this.readBumpSensor(1))
+			while(this.r.getPing() < 20 && !this.readBumpSensor())
 			{
 				this.r.refreshAnalogPins();
 			}
@@ -154,29 +156,72 @@ public class Navigator
 	private void moveForwardWithBumpSensors()
 	{
 		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
-		while(!this.readBumpSensor(1) && !this.readBumpSensor(2))
+		while(!this.readBumpSensor())
 		{
 			this.r.refreshAnalogPins();
 		}
 		this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 200);
 	}
-	private boolean readBumpSensor(int x)
+	private boolean readBumpSensor()
 	{
 		boolean engaged = false;
-		if(x == 1)
-		{
-			if(this.r.getAnalogPin(3).getValue() == 0)
-				engaged = true;
-		}
-		else if(x == 2)
-		{
-			if(this.r.getAnalogPin(2).getValue() == 0)
-				engaged = true;
-		}
+		if(this.r.getAnalogPin(3).getValue() == 0)
+			engaged = true;
+		
 		return engaged;
+	}
+	private void moveUntilStopped(int direction)
+	{
+		this.orient(direction);
+		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 1000);
+		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+		while(this.r.getPing() < 20)
+		{
+			if(this.readBumpSensor())
+			{
+				this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 200);
+				this.bumpSensorEngaged = true;
+				break;
+			}
+			this.r.refreshAnalogPins();
+		}
+		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+		
+		if(this.bumpSensorEngaged)
+		{
+			this.bumpSensorEngaged = false;
+			
+			int bearing = this.r.readCompass();
+			if(bearing == EAST)
+				this.moveUntilStopped(SOUTH);
+			else
+				this.moveUntilStopped(bearing - 90);
+		}
+		else
+		{
+			int bearing = this.r.readCompass();
+			if(bearing == SOUTH)
+				this.moveUntilStopped(EAST);
+			else
+				this.moveUntilStopped(bearing + 90);
+		}
 	}
 	private void findWell()
 	{
-		
+		// Below Ground
+		if(this.courseNumber == 1)
+		{
+//			this.moveUntilStopped(this.EAST);
+		}
+		// Ground
+		else if(this.courseNumber == 2)
+		{
+			
+		}
+		// Above Ground
+		else if(this.courseNumber == 3)
+		{
+			
+		}
 	}
 }
