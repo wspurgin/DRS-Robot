@@ -170,13 +170,15 @@ public class Navigator
 		
 		return engaged;
 	}
-	private void moveUntilStopped(int direction)
+	private void findWell(int direction)
 	{
+		boolean lineSensor = false;
 		this.orient(direction);
-		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 1000);
+		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 10000);
 		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
 		while(this.r.getPing() < 20)
 		{
+			
 			if(this.readBumpSensor())
 			{
 				this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 200);
@@ -193,35 +195,25 @@ public class Navigator
 			
 			int bearing = this.r.readCompass();
 			if(bearing == EAST)
-				this.moveUntilStopped(SOUTH);
+				this.findWell(SOUTH);
 			else
-				this.moveUntilStopped(bearing - 90);
+				this.findWell(bearing - 90);
 		}
-		else
+		else if(!lineSensor)
 		{
 			int bearing = this.r.readCompass();
 			if(bearing == SOUTH)
-				this.moveUntilStopped(EAST);
+				this.findWell(EAST);
 			else
-				this.moveUntilStopped(bearing + 90);
+				this.findWell(bearing + 90);
+		}
+		else
+		{
+			moveIntoPosition();
 		}
 	}
-	private void findWell()
+	void moveIntoPosition()
 	{
-		// Below Ground
-		if(this.courseNumber == 1)
-		{
-//			this.moveUntilStopped(this.EAST);
-		}
-		// Ground
-		else if(this.courseNumber == 2)
-		{
-			
-		}
-		// Above Ground
-		else if(this.courseNumber == 3)
-		{
-			
-		}
+		
 	}
 }
