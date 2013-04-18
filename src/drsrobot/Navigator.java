@@ -33,12 +33,12 @@ public class Navigator
         //		which bump sensor is engaged. Note that if for some reason the boolean
         //		bumpSensorEngaged is true. The Robot will not turn
 		if(!this.bumpSensorEngaged)
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, -255, 0);
+			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, -255, 0);
 		else if(this.readBumpSensor())
 		{
-			this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 100);
+			this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 100);
 			if(this.readBumpSensor())
-				this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 200);
+				this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 200);
 		}
 		else
 			this.bumpSensorEngaged = false;
@@ -65,7 +65,7 @@ public class Navigator
 	public void findRFID()
 	{
 		this.sensor.connect();
-		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 		while(!this.sensor.hasTag())
 		{
 			if(this.readBumpSensor())
@@ -106,7 +106,7 @@ public class Navigator
 			orient(this.NORTH);
 			moveForwardWithBumpSensors();
 			orient(this.WEST);
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 			while(this.r.getPing() < 20 && !this.readBumpSensor())
 			{
 				this.r.refreshAnalogPins();
@@ -116,7 +116,7 @@ public class Navigator
 			 *This way (since the Ping sensor is in the middle on the right of the
 			 *robot) we will move completely through the gap.
 			 */
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 0, 10000);
+			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 0, 10000);
 			orient(this.NORTH);
 		}
 		else if(this.courseNumber == 2)
@@ -135,7 +135,7 @@ public class Navigator
 			orient(this.SOUTH);
 			moveForwardWithBumpSensors();
 			orient(this.EAST);
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 			while(this.r.getPing() < 20 && !this.readBumpSensor())
 			{
 				this.r.refreshAnalogPins();
@@ -145,7 +145,7 @@ public class Navigator
 			 *This way (since the Ping sensor is in the middle on the right of the
 			 *robot) we will move completely through the gap.
 			 */
-			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 0, 10000);
+			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 0, 10000);
 			orient(this.SOUTH);
 		}
 		else if(this.courseNumber == 2)
@@ -184,12 +184,12 @@ public class Navigator
 	}
 	private void moveForwardWithBumpSensors()
 	{
-		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 		while(!this.readBumpSensor())
 		{
 			this.r.refreshAnalogPins();
 		}
-		this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 200);
+		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 200);
 	}
 	private boolean readBumpSensor()
 	{
@@ -217,8 +217,8 @@ public class Navigator
 	{
 		boolean lineSensor = false;
 		this.orient(direction);
-		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 10000);
-		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 10000);
+		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 		while(this.r.getPing() < 20)
 		{
 			lineSensor = this.lineSensor();
@@ -227,7 +227,7 @@ public class Navigator
 			
 			if(this.readBumpSensor())
 			{
-				this.r.runMotor(RXTXRobot.MOTOR1, -255, RXTXRobot.MOTOR2, -255, 200);
+				this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 200);
 				this.bumpSensorEngaged = true;
 				break;
 			}
