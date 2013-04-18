@@ -21,6 +21,7 @@ public class Navigator
 		this.sensor = new RFIDSensor();
 		this.sensor.setPort(RFID_PORT);
 		this.bumpSensorEngaged = false;
+		this.courseNumber = 1;
 	}
 	public void setUp()
 	{
@@ -184,12 +185,13 @@ public class Navigator
 	}
 	private void moveForwardWithBumpSensors()
 	{
+		this.r.refreshAnalogPins();
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 		while(!this.readBumpSensor())
 		{
 			this.r.refreshAnalogPins();
 		}
-		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 200);
+		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 500);
 	}
 	private boolean readBumpSensor()
 	{
@@ -258,7 +260,7 @@ public class Navigator
 				this.findWell(NORTH);
 			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 				this.findWell(WEST);
-			else if(bearing >= WEST -2 && bearing <= WEST + 2)
+			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				this.findWell(SOUTH);
 		}
 		else
