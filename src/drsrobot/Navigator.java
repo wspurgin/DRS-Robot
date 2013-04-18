@@ -10,10 +10,10 @@ public class Navigator
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	private boolean bumpSensorEngaged;
 	private int courseNumber;
-	private final int NORTH = 90;
-	private final int EAST = 0;
-	private final int WEST = 180;
-	private final int SOUTH = 270;
+	private final int NORTH = 171;
+	private final int EAST = 238;
+	private final int WEST = 351;
+	private final int SOUTH = 82;
 	
 	public Navigator(RXTXRobot r)
 	{
@@ -24,7 +24,7 @@ public class Navigator
 	}
 	public void setUp()
 	{
-		this.orient(this.NORTH);
+		this.orient(this.EAST);
 		this.findRFID();
 	}
 	public void orient(int direction)
@@ -43,7 +43,7 @@ public class Navigator
 		else
 			this.bumpSensorEngaged = false;
 		this.r.refreshAnalogPins();
-		while(this.r.readCompass() != direction)
+		while(this.r.readCompass() > direction + 2 || this.r.readCompass() < direction - 2)
 		{
 			if(this.readBumpSensor())
 			{
@@ -123,8 +123,37 @@ public class Navigator
 		{
 			orient(this.NORTH);
 		}
-		findWell();
+		findWell(this.EAST);
 	}
+	//DO NOT TOUCH> NICKS> DO OBSTCLES SHIT
+	public void goHome()
+	{
+		if(this.courseNumber == 1 || this.courseNumber == 3)
+		{
+			orient(this.WEST);
+			moveForwardWithBumpSensors();
+			orient(this.SOUTH);
+			moveForwardWithBumpSensors();
+			orient(this.EAST);
+			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
+			while(this.r.getPing() < 20 && !this.readBumpSensor())
+			{
+				this.r.refreshAnalogPins();
+			}
+			/*
+			 *The robot will "travel" a bit as it turns allowing it to move a little forward.
+			 *This way (since the Ping sensor is in the middle on the right of the
+			 *robot) we will move completely through the gap.
+			 */
+			this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 0, 10000);
+			orient(this.SOUTH);
+		}
+		else if(this.courseNumber == 2)
+		{
+			orient(this.SOUTH);
+		}
+	}
+	
 	public RXTXRobot getR()
 	{
 		return r;
@@ -165,10 +194,24 @@ public class Navigator
 	private boolean readBumpSensor()
 	{
 		boolean engaged = false;
-		if(this.r.getAnalogPin(3).getValue() == 0)
+		if(this.r.getAnalogPin(2).getValue() == 0)
 			engaged = true;
 		
 		return engaged;
+	}
+	private boolean lineSensor()
+	{
+		int count = 0;
+		for(int i = 0; i < 10; i++)
+		{
+			if(this.r.getAnalogPin(3).getValue() < 800)
+				count++;
+			
+			if(count >= 3)
+				return true;
+		}
+		
+		return false;
 	}
 	private void findWell(int direction)
 	{
@@ -178,6 +221,9 @@ public class Navigator
 		this.r.runMotor(RXTXRobot.MOTOR1, 255, RXTXRobot.MOTOR2, 255, 0);
 		while(this.r.getPing() < 20)
 		{
+			lineSensor = this.lineSensor();
+			if(lineSensor)
+				break;
 			
 			if(this.readBumpSensor())
 			{
@@ -194,18 +240,26 @@ public class Navigator
 			this.bumpSensorEngaged = false;
 			
 			int bearing = this.r.readCompass();
-			if(bearing == EAST)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+				this.findWell(WEST);
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 				this.findWell(SOUTH);
-			else
-				this.findWell(bearing - 90);
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+				this.findWell(EAST);
+			else if(bearing >= WEST -2 && bearing <= WEST + 2)
+				this.findWell(NORTH);
 		}
 		else if(!lineSensor)
 		{
 			int bearing = this.r.readCompass();
-			if(bearing == SOUTH)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				this.findWell(EAST);
-			else
-				this.findWell(bearing + 90);
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+				this.findWell(NORTH);
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+				this.findWell(WEST);
+			else if(bearing >= WEST -2 && bearing <= WEST + 2)
+				this.findWell(SOUTH);
 		}
 		else
 		{
