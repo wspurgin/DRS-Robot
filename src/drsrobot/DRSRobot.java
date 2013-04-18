@@ -28,6 +28,8 @@ public class DRSRobot
 		remediator.moveSensor();
 		remediator.test();
 		remediator.removeSensor();
+        
+        n.goHome();
 	}
 	public void close()
 	{

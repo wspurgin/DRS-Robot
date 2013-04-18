@@ -118,13 +118,13 @@ public class Navigator
 			 *robot) we will move completely through the gap.
 			 */
 			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 0, 10000);
-			orient(this.NORTH);
 		}
-		else if(this.courseNumber == 2)
-		{
-			orient(this.NORTH);
-		}
-		findWell(this.EAST);
+        //		Course number 2 only needs the following code, since it has no obstacle to navigate around. i.e it has no particular
+        //		condition that would require its own steps.
+		
+		orient(this.EAST);
+		moveForwardWithBumpSensors();
+		findWell(this.NORTH);
 	}
 	//DO NOT TOUCH> NICKS> DO OBSTCLES SHIT
 	public void goHome()
@@ -229,7 +229,7 @@ public class Navigator
 			
 			if(this.readBumpSensor())
 			{
-				this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 200);
+				this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 2000);
 				this.bumpSensorEngaged = true;
 				break;
 			}
