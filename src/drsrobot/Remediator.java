@@ -37,7 +37,7 @@ public class Remediator
         // Prints out turbidity, temperature, and pH to the screen
 	    System.out.println("The turbidity is " + this.turbidity + ".");
 	    System.out.println("The temperature is " + this.temperature + " degrees Celsius.");
-	    System.out.println("The pH is " + this.pH + ".");
+	    System.out.printf("The pH is %.1f.\n", this.pH);
 	    
 	    // A test will normally call the remediate method, but for the sake of this
 	    // demo we will not call the remediate method since each one much be done statically
@@ -75,7 +75,7 @@ public class Remediator
 			this.r.runMixer(RXTXRobot.MOTOR4, 500);
             this.r.stopMixer(RXTXRobot.MOTOR4);
 		    
-		    this.pH = measurePH();
+		    this.pH = this.measurePH();
 		}
 	}
 
@@ -123,7 +123,7 @@ public class Remediator
 		double a = .0005922;
 		double b = .3487;
 		double c = 450.605;
-		double y = this.findAverageValue(1);
+		double y = this.findAverageValue(0);
 		c = c - y;
 		
 		int result = (int)((b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
@@ -141,18 +141,18 @@ public class Remediator
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double a = 0.0006181;
-		double b = -.77799;
+		double a = 0.0006524;
+		double b = -.74155;
 		double R = 8.3145;
 		double F = 96485.339924;
 		double T = this.temperature + 273.15;
-		double y = this.findAverageValue(5);
+		double y = this.findAverageValue(1);
 		
 		return -(((a * y + b) * F) / (R * T * 2.3));
 	}
 	
 	// Calculate the weighted average of a value read for sensor based off pin number
-	private double findAverageValue(int pinNum)
+	public double findAverageValue(int pinNum)
 	{
 		double y = 0;
 		// If pinNum is 2, run code for temperature
@@ -161,7 +161,7 @@ public class Remediator
 			ArrayList<Double> list = new ArrayList<Double>(); 
 			ArrayList<Integer> frequency = new ArrayList<Integer>();
 			
-			// Loop 200 times
+			// Loop 50 times
 			for(int i = 0; i < 200; i++)
 			{
 				this.r.refreshDigitalPins();
@@ -237,8 +237,7 @@ public class Remediator
 			}
 			y /= (double)count;
 		}
-		
-//		System.out.println("\n" + y);
+		System.out.println(y);
 		return y;
 	}
 	
@@ -347,7 +346,7 @@ public class Remediator
 		{
 			int j;
 			j= 10;
-			//Returns package to 145, 145
+			// Returns package to 145, 145
 			for(int i = 75; i <= 145; i++)
 			{
 				this.r.moveServo(RXTXRobot.SERVO1, i);

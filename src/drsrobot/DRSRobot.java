@@ -11,10 +11,10 @@ public class DRSRobot
 //	  DRSRobot from which the robot mechanics are operated.
 	public DRSRobot() 
 	{
+		r = new RXTXRobot();
 		System.out.println("This is the DRS Robot, please enter your connection port");
 		Scanner s = new Scanner(System.in);
 		r.setPort(s.nextLine());
-		r.setHasEncodedMotors(true);
 		r.connect();
 	}
 	public void run()
