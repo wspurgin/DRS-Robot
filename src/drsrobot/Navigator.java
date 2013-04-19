@@ -10,23 +10,24 @@ public class Navigator
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	private boolean bumpSensorEngaged;
 	private int courseNumber;
-	private final int NORTH = 189;
-	private final int EAST = 266;
-	private final int WEST = 103;
-	private final int SOUTH = 18;
+	private final int NORTH = 185;
+	private final int EAST = 244;
+	private final int WEST = 64;
+	private final int SOUTH = 26;
 	
 	public Navigator(RXTXRobot r)
 	{
 		this.r = r;
 		this.sensor = new RFIDSensor();
 		this.sensor.setPort(RFID_PORT);
+		this.sensor.connect();
 		this.bumpSensorEngaged = false;
 		this.courseNumber = 1;
 	}
 	public void setUp()
 	{
 		this.orient(this.EAST);
-		this.findRFID();
+		this.findRFID(EAST);
 	}
 	public void orient(int direction)
 	{
@@ -34,7 +35,7 @@ public class Navigator
         //		which bump sensor is engaged. Note that if for some reason the boolean
         //		bumpSensorEngaged is true. The Robot will not turn
 		if(!this.bumpSensorEngaged)
-			this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, -255, 0);
+			this.r.runMotor(RXTXRobot.MOTOR1, 195, RXTXRobot.MOTOR2, -215, 0);
 		else if(this.readBumpSensor())
 		{
 			this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 100);
@@ -63,9 +64,9 @@ public class Navigator
 	}
     //	This method circles the perimeter of the playing field until the robot locates
     //	the RFID tag and assigns the courseNumber appropriately.
-	public void findRFID()
+	public void findRFID(int direction)
 	{
-		this.sensor.connect();
+		System.out.println("Moving to RFID....");
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 		while(!this.sensor.hasTag())
 		{
@@ -81,16 +82,32 @@ public class Navigator
 		{
 			this.bumpSensorEngaged = false;
 			this.r.refreshAnalogPins();
-			int bearing = this.r.readCompass();
-			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
-				this.findWell(WEST);
-			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
-				this.findWell(SOUTH);
-			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
-				this.findWell(EAST);
-			else if(bearing >= WEST -2 && bearing <= WEST + 2)
-				this.findWell(NORTH);
-			this.findRFID();
+			if(direction >= SOUTH - 4 && direction <= SOUTH + 4)
+			{
+				System.out.println("Change bearing: WEST");
+				direction = WEST;
+				orient(WEST);
+			}
+			else if(direction >= EAST - 4 && direction <= EAST + 4)
+			{
+				System.out.println("Change bearing: SOUTH");
+				direction = SOUTH;
+				orient(SOUTH);
+			}
+			else if(direction >= NORTH - 4 && direction <= NORTH + 4)
+			{
+				System.out.println("Change bearing: EAST");
+				direction = SOUTH;
+				orient(EAST);
+			}
+			else if(direction >= WEST - 4 && direction <= WEST + 4)
+			{
+				System.out.println("Change bearing: NORTH");
+				direction = NORTH;
+				orient(NORTH);
+			}
+			
+			this.findRFID(direction);
 		}
 		String tag = this.sensor.getTag();
 		if(tag.equals("6A003E4EA6BC"))
@@ -101,6 +118,7 @@ public class Navigator
 			this.courseNumber = 3;
 		else
 			System.out.println("ERROR: Invalid RFID tag");
+		this.sensor.close();
 	}
 	public void goToWell()
 	{
@@ -205,41 +223,41 @@ public class Navigator
 		
 		return engaged;
 	}
-//	Returns true if after looping tens times, at least three of the values were less than 800 (on white)
+    //	Returns true if after looping tens times, at least three of the values were less than 800 (on white)
 	private boolean lineSensor()
 	{
 		int count = 0;
-//		Loop ten times
+        //		Loop ten times
 		for(int i = 0; i < 10; i++)
 		{
-//			Increment count, line sensor returning low values
+            //			Increment count, line sensor returning low values
 			if(this.r.getAnalogPin(3).getValue() < 800)
 				count++;
-//			On the white, return true
+            //			On the white, return true
 			if(count >= 3)
 				return true;
 		}
 		
 		return false;
 	}
-//	Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
+    //	Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
 	private void findWell(int direction)
 	{
 		boolean lineSensor = false;
 		this.orient(direction);
-//		Run forward unconditionally
+        //		Run forward unconditionally
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 10000);
-//		Run motors indefinitely
+        //		Run motors indefinitely
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-//		Loop while close to the wall, break if either line sensor or bump sensors are triggered
+        //		Loop while close to the wall, break if either line sensor or bump sensors are triggered
 		while(this.r.getPing() < 20)
 		{
 			lineSensor = this.lineSensor();
-//			Break if line sensor trigged
+            //			Break if line sensor trigged
 			if(lineSensor)
 				break;
 			
-//			Back up and break if bump sensor triggered
+            //			Back up and break if bump sensor triggered
 			if(this.readBumpSensor())
 			{
 				this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 2000);
@@ -248,10 +266,10 @@ public class Navigator
 			}
 			this.r.refreshAnalogPins();
 		}
-//		Turn off motors
+        //		Turn off motors
 		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
 		
-//		If the bump sensor was triggered, turn to avoid either an obstacle or a wall
+        //		If the bump sensor was triggered, turn to avoid either an obstacle or a wall
 		if(this.bumpSensorEngaged)
 		{
 			this.bumpSensorEngaged = false;
@@ -266,10 +284,10 @@ public class Navigator
 			else if(bearing >= WEST -2 && bearing <= WEST + 2)
 				this.findWell(NORTH);
 		}
-//		If the bump sensor wasn't triggered and line sensor wasn't triggered, the ping over-distanced
+        //		If the bump sensor wasn't triggered and line sensor wasn't triggered, the ping over-distanced
 		else if(!lineSensor)
 		{
-//			Turn back from whence you came
+            //			Turn back from whence you came
 			int bearing = this.r.readCompass();
 			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				this.findWell(EAST);
@@ -280,19 +298,19 @@ public class Navigator
 			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				this.findWell(SOUTH);
 		}
-//		THE LINE SENSOR WAS TRIGGERED! You're at the well.
+        //		THE LINE SENSOR WAS TRIGGERED! You're at the well.
 		else
 		{
 			moveIntoPosition(this.r.readCompass());
 		}
 	}
-//	Move the robot into appropriate position for remediation to begin.
-//	Because the line sensor was activated when this method is called, we have to 
-//	assume that the well is in front of or behind us on our current bearing.
+    //	Move the robot into appropriate position for remediation to begin.
+    //	Because the line sensor was activated when this method is called, we have to
+    //	assume that the well is in front of or behind us on our current bearing.
 	private void moveIntoPosition(int bearing)
 	{
-//		this method needs to move to it's perpendicular position to put the Ping
-//		sensor in position.
+        //		this method needs to move to it's perpendicular position to put the Ping
+        //		sensor in position.
 		if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 			orient(EAST);
 		else if(bearing >= EAST - 2 && bearing <= EAST + 2)
@@ -301,20 +319,20 @@ public class Navigator
 			orient(WEST);
 		else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 			orient(SOUTH);
-//		reads for the  base distance from the Ping sensor.
+        //		reads for the  base distance from the Ping sensor.
 		int base = this.r.getPing();
 		int count = 0;
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-//		if the Ping sensor reads a significant spike in distances, we know that it returned  
-//		the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
+        //		if the Ping sensor reads a significant spike in distances, we know that it returned
+        //		the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
 		while((this.r.getPing() >= base - 2 && this.r.getPing() <= base + 2) && count != 25)
 		{
 			r.sleep(100);
 			count++;
 		}
 		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-//		in the case that the Ping sensor had been engaged we move towards the object which
-//		should be the well.
+        //		in the case that the Ping sensor had been engaged we move towards the object which
+        //		should be the well.
 		if(!(this.r.getPing() >= base -2 && this.r.getPing() <= base + 2))
 		{
 			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
@@ -327,8 +345,8 @@ public class Navigator
 				orient(WEST);
 			moveForwardWithBumpSensors();
 		}
-//		in the case that it went too long without reading a different value
-//		it calls it self recursively to locate the well behind it's original bearing
+        //		in the case that it went too long without reading a different value
+        //		it calls it self recursively to locate the well behind it's original bearing
 		else if(count == 25)
 		{
 			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
