@@ -10,10 +10,10 @@ public class Navigator
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	private boolean bumpSensorEngaged;
 	private int courseNumber;
-	private final int NORTH = 171;
-	private final int EAST = 238;
-	private final int WEST = 351;
-	private final int SOUTH = 82;
+	private final int NORTH = 189;
+	private final int EAST = 266;
+	private final int WEST = 103;
+	private final int SOUTH = 18;
 	
 	public Navigator(RXTXRobot r)
 	{
@@ -82,10 +82,14 @@ public class Navigator
 			this.bumpSensorEngaged = false;
 			this.r.refreshAnalogPins();
 			int bearing = this.r.readCompass();
-			if(bearing == EAST)
-				this.orient(SOUTH);
-			else
-				this.orient(bearing - 90);
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+				this.findWell(WEST);
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+				this.findWell(SOUTH);
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+				this.findWell(EAST);
+			else if(bearing >= WEST -2 && bearing <= WEST + 2)
+				this.findWell(NORTH);
 			this.findRFID();
 		}
 		String tag = this.sensor.getTag();
@@ -183,7 +187,7 @@ public class Navigator
 	{
 		return this.courseNumber;
 	}
-	private void moveForwardWithBumpSensors()
+	public void moveForwardWithBumpSensors()
 	{
 		this.r.refreshAnalogPins();
 		this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
@@ -193,7 +197,7 @@ public class Navigator
 		}
 		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 500);
 	}
-	private boolean readBumpSensor()
+	public boolean readBumpSensor()
 	{
 		boolean engaged = false;
 		if(this.r.getAnalogPin(2).getValue() == 0)
