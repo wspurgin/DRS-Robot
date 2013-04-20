@@ -19,8 +19,8 @@ public class Navigator
 	{
 		this.r = r;
 		this.sensor = new RFIDSensor();
-//		this.sensor.setPort(RFID_PORT);
-//		this.sensor.connect();
+		this.sensor.setPort(RFID_PORT);
+		this.sensor.connect();
 		this.bumpSensorEngaged = false;
 		this.courseNumber = 1;
 	}
