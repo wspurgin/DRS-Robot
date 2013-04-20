@@ -46,7 +46,7 @@ public class Navigator
 		else
 			this.bumpSensorEngaged = false;
 		this.r.refreshAnalogPins();
-		while(this.r.readCompass() > direction + 2 || this.r.readCompass() < direction - 2)
+		while(this.r.readCompass() > direction + 4 || this.r.readCompass() < direction - 4)
 		{
 			if(this.readBumpSensor())
 			{
@@ -276,13 +276,13 @@ public class Navigator
 			this.bumpSensorEngaged = false;
 			
 			int bearing = this.r.readCompass();
-			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
 				this.findWell(WEST);
-			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
 				this.findWell(SOUTH);
-			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
 				this.findWell(EAST);
-			else if(bearing >= WEST -2 && bearing <= WEST + 2)
+			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
 				this.findWell(NORTH);
 		}
         //		If the bump sensor wasn't triggered and line sensor wasn't triggered, the ping over-distanced
@@ -290,13 +290,13 @@ public class Navigator
 		{
             //			Turn back from whence you came
 			int bearing = this.r.readCompass();
-			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
 				this.findWell(EAST);
-			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
 				this.findWell(NORTH);
-			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
 				this.findWell(EAST);
-			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
+			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
 				this.findWell(SOUTH);
 		}
         //		THE LINE SENSOR WAS TRIGGERED! You're at the well.
@@ -312,13 +312,13 @@ public class Navigator
 	{
         //		this method needs to move to it's perpendicular position to put the Ping
         //		sensor in position.
-		if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+		if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
 			orient(EAST);
-		else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+		else if(bearing >= EAST - 4 && bearing <= EAST + 4)
 			orient(NORTH);
-		else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+		else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
 			orient(WEST);
-		else if(bearing >= WEST - 2 && bearing <= WEST + 2)
+		else if(bearing >= WEST - 4 && bearing <= WEST + 4)
 			orient(SOUTH);
         //		reads for the  base distance from the Ping sensor.
 		int base = this.r.getPing();
@@ -336,13 +336,13 @@ public class Navigator
         //		should be the well.
 		if(!(this.r.getPing() >= base -2 && this.r.getPing() <= base + 2))
 		{
-			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
 				orient(SOUTH);
-			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
 				orient(EAST);
-			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
 				orient(NORTH);
-			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
+			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
 				orient(WEST);
 			moveForwardWithBumpSensors();
 		}
@@ -350,13 +350,13 @@ public class Navigator
         //		it calls it self recursively to locate the well behind it's original bearing
 		else if(count == 25)
 		{
-			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
+			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
 				moveIntoPosition(NORTH);
-			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
+			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
 				moveIntoPosition(WEST);
-			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
+			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
 				moveIntoPosition(SOUTH);
-			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
+			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
 				moveIntoPosition(EAST);
 		}
 	}
