@@ -41,6 +41,7 @@ public class Navigator
 			this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 100);
 			if(this.readBumpSensor())
 				this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 200);
+            orient(direction);
 		}
 		else
 			this.bumpSensorEngaged = false;
