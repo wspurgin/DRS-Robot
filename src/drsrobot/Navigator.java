@@ -10,10 +10,10 @@ public class Navigator
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	private boolean bumpSensorEngaged;
 	private int courseNumber;
-	private final int NORTH = 199;
-	private final int EAST = 101;
-	private final int WEST = 281;
-	private final int SOUTH = 17;
+	private final int NORTH = 180;
+	private final int EAST = 254;
+	private final int WEST = 81;
+	private final int SOUTH = 334;
 	
 	public Navigator(RXTXRobot r)
 	{
@@ -46,7 +46,7 @@ public class Navigator
 		else
 			this.bumpSensorEngaged = false;
 		this.r.refreshAnalogPins();
-		while(this.r.readCompass() > direction + 4 || this.r.readCompass() < direction - 4)
+		while(this.r.readCompass() > direction + 2 || this.r.readCompass() < direction - 2)
 		{
 			if(this.readBumpSensor())
 			{
@@ -78,30 +78,30 @@ public class Navigator
 			}
 			this.r.refreshAnalogPins();
 		}
-		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
 		if(this.bumpSensorEngaged)
 		{
 			this.bumpSensorEngaged = false;
 			this.r.refreshAnalogPins();
-			if(direction >= SOUTH - 4 && direction <= SOUTH + 4)
+			if(direction == SOUTH)
 			{
 				System.out.println("Change bearing: WEST");
 				direction = WEST;
 				orient(WEST);
 			}
-			else if(direction >= EAST - 4 && direction <= EAST + 4)
+			else if(direction == EAST)
 			{
 				System.out.println("Change bearing: SOUTH");
 				direction = SOUTH;
 				orient(SOUTH);
 			}
-			else if(direction >= NORTH - 4 && direction <= NORTH + 4)
+			else if(direction == NORTH)
 			{
 				System.out.println("Change bearing: EAST");
-				direction = SOUTH;
+				direction = EAST;
 				orient(EAST);
 			}
-			else if(direction >= WEST - 4 && direction <= WEST + 4)
+			else if(direction == WEST)
 			{
 				System.out.println("Change bearing: NORTH");
 				direction = NORTH;
@@ -119,6 +119,7 @@ public class Navigator
 			this.courseNumber = 3;
 		else
 			System.out.println("ERROR: Invalid RFID tag");
+			System.out.println(tag);
 		this.sensor.close();
 	}
 	public void goToWell()
@@ -276,13 +277,13 @@ public class Navigator
 			this.bumpSensorEngaged = false;
 			
 			int bearing = this.r.readCompass();
-			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				this.findWell(WEST);
-			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 				this.findWell(SOUTH);
-			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 				this.findWell(EAST);
-			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
+			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				this.findWell(NORTH);
 		}
         //		If the bump sensor wasn't triggered and line sensor wasn't triggered, the ping over-distanced
@@ -290,13 +291,13 @@ public class Navigator
 		{
             //			Turn back from whence you came
 			int bearing = this.r.readCompass();
-			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				this.findWell(EAST);
-			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 				this.findWell(NORTH);
-			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 				this.findWell(EAST);
-			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
+			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				this.findWell(SOUTH);
 		}
         //		THE LINE SENSOR WAS TRIGGERED! You're at the well.
@@ -312,13 +313,13 @@ public class Navigator
 	{
         //		this method needs to move to it's perpendicular position to put the Ping
         //		sensor in position.
-		if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
+		if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 			orient(EAST);
-		else if(bearing >= EAST - 4 && bearing <= EAST + 4)
+		else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 			orient(NORTH);
-		else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
+		else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 			orient(WEST);
-		else if(bearing >= WEST - 4 && bearing <= WEST + 4)
+		else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 			orient(SOUTH);
         //		reads for the  base distance from the Ping sensor.
 		int base = this.r.getPing();
@@ -336,13 +337,13 @@ public class Navigator
         //		should be the well.
 		if(!(this.r.getPing() >= base -2 && this.r.getPing() <= base + 2))
 		{
-			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				orient(SOUTH);
-			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 				orient(EAST);
-			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 				orient(NORTH);
-			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
+			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				orient(WEST);
 			moveForwardWithBumpSensors();
 		}
@@ -350,13 +351,13 @@ public class Navigator
         //		it calls it self recursively to locate the well behind it's original bearing
 		else if(count == 25)
 		{
-			if(bearing >= SOUTH - 4 && bearing <= SOUTH + 4)
+			if(bearing >= SOUTH - 2 && bearing <= SOUTH + 2)
 				moveIntoPosition(NORTH);
-			else if(bearing >= EAST - 4 && bearing <= EAST + 4)
+			else if(bearing >= EAST - 2 && bearing <= EAST + 2)
 				moveIntoPosition(WEST);
-			else if(bearing >= NORTH - 4 && bearing <= NORTH + 4)
+			else if(bearing >= NORTH - 2 && bearing <= NORTH + 2)
 				moveIntoPosition(SOUTH);
-			else if(bearing >= WEST - 4 && bearing <= WEST + 4)
+			else if(bearing >= WEST - 2 && bearing <= WEST + 2)
 				moveIntoPosition(EAST);
 		}
 	}
