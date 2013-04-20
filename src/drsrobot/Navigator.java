@@ -149,7 +149,7 @@ public class Navigator
 		moveForwardWithBumpSensors();
 		findWell(this.NORTH);
 	}
-	//DO NOT TOUCH> NICKS> DO OBSTCLES SHIT
+	// Takes robot back to other side of field
 	public void goHome()
 	{
 		if(this.courseNumber == 1 || this.courseNumber == 3)
