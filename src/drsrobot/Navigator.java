@@ -10,17 +10,17 @@ public class Navigator
 	private final String RFID_PORT = "/dev/tty.usbserial-A901JX0L";
 	private boolean bumpSensorEngaged;
 	private int courseNumber;
-	private final int NORTH = 185;
-	private final int EAST = 244;
-	private final int WEST = 64;
-	private final int SOUTH = 26;
+	private final int NORTH = 199;
+	private final int EAST = 101;
+	private final int WEST = 281;
+	private final int SOUTH = 17;
 	
 	public Navigator(RXTXRobot r)
 	{
 		this.r = r;
 		this.sensor = new RFIDSensor();
-		this.sensor.setPort(RFID_PORT);
-		this.sensor.connect();
+//		this.sensor.setPort(RFID_PORT);
+//		this.sensor.connect();
 		this.bumpSensorEngaged = false;
 		this.courseNumber = 1;
 	}
@@ -213,7 +213,7 @@ public class Navigator
 		{
 			this.r.refreshAnalogPins();
 		}
-		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 500);
+		this.r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
 	}
 	public boolean readBumpSensor()
 	{

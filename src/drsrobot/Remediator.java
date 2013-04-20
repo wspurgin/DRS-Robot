@@ -120,20 +120,19 @@ public class Remediator
 	// Returns turbidity in NTU
 	public double measureTurbidity()
 	{	
-		double a = .0005922;
-		double b = .3487;
-		double c = 450.605;
+		double a = .1474;
+		double b = -118.3897;
+		double c = 23748.1467;
 		double y = this.findAverageValue(0);
-		c = c - y;
+//		c = c - y;
+//		int result = (int)((b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
 		
-		int result = (int)((b - Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+		int result = (int)(a * y * y + b * y + c);
 		
-		if(y < 400 || result == 0)
-		{
-			a = -.10081;
-			b = 445.82;
-			result = (int)((y - b) / a);
-		}
+//		double a = -.0975;
+//		double b = 386.9245;
+//		double y = this.findAverageValue(0);
+//		int result = (int)(a * y + b);
 		
 		return result;
 	}
