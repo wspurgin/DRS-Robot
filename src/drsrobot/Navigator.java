@@ -369,6 +369,7 @@ public class Navigator
     	if(courseNumber == 1)
     	{
 	    	this.r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 2500);
+	    	moveForwardWithLineSensor();
 	    	this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.platformDistance - 59942)
@@ -544,7 +545,7 @@ public class Navigator
 	}
 
 	// Moves forward until bump sensor is triggered
-	public void moveForwardWithBumpSensor()
+	private void moveForwardWithBumpSensor()
 	{
 		r.refreshAnalogPins();
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
@@ -555,4 +556,14 @@ public class Navigator
 		straighten();
 		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
 	}
+	private void moveForwardWithLineSensor()
+	{
+		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
+		while(!lineSensor())
+		{
+			r.sleep(50);
+		}
+		r.runMotor(RXTXRobot.MOTOR1, 01, RXTXRobot.MOTOR2, 0, 0);
+	}
+
 }
