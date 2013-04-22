@@ -30,7 +30,7 @@ public class Navigator
 		this.courseNumber = 1;
 
 		// East is 1,
-		bearing = 2;
+		bearing = 1;
 	}
 
 	// Receiving positive one means left turn, negative one right turn
@@ -215,14 +215,14 @@ public class Navigator
 			if(lineSensor)
 				break;
 		}
-		
+
 		if(lineSensor)
 		{
 			r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
 			System.out.println("Line Sensor Triggered");
 			alignToWell();
 		}
-		
+
 		straighten();
 		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
        
@@ -364,7 +364,7 @@ public class Navigator
 	    	{
 	    		this.r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
 	    	}
-	    	
+
 	    	this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 0, 250);
     	}
     	
