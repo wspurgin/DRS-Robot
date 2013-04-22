@@ -28,54 +28,51 @@ public class Remediator
 	// Test the water for values of turbidity, temperature, and pH
 	public void test()
 	{   
-	    this.moveSensor();
+	    moveSensor();
 	    // Measure turbidity, temperature, and pH
 	    //this.turbidity = measureTurbidity();
-	    this.temperature = measureTemp();
-	    this.pH = measurePH();
+	    temperature = measureTemp();
+	    pH = measurePH();
 	    
         // Prints out turbidity, temperature, and pH to the screen
-	    System.out.println("The turbidity is " + this.turbidity + ".");
-	    System.out.println("The temperature is " + this.temperature + " degrees Celsius.");
-	    System.out.printf("The pH is %.1f.\n", this.pH);
+	    System.out.println("The turbidity is " + turbidity + ".");
+	    System.out.printf("The temperature is %.1f degrees Celsius.\n", temperature);
+	    System.out.printf("The pH is %.1f.\n", pH);
 	    
-	    // A test will normally call the remediate method, but for the sake of this
-	    // demo we will not call the remediate method since each one much be done statically
-	    // ^^ What test?
-	    this.remediate();
+	    remediate();
 	}
 	
 	// Adds neutralizing solution to water until pH becomes neutral
 	public void remediate()
 	{
-		this.pH = this.measurePH();
+		pH = measurePH();
 		int mixSpeed = 100; // Max
 		double volumeOriginal = 750;
-		double volume = ((Math.pow(10, -1*this.pH) - Math.pow(10, -7)) * volumeOriginal) / (Math.pow(10, -3) - Math.pow(10, -7));
+		double volume = ((Math.pow(10, -1*pH) - Math.pow(10, -7)) * volumeOriginal) / (Math.pow(10, -3) - Math.pow(10, -7));
 		volume *= .80;
 		volume = 30000 + (volume - 2.4) * (25 / 3);
 		int time = (int)(volume / 1000);
 		
-//		// Run loop for time needed to add 80% of calculated value
-//		this.r.runMotor(RXTXRobot.MOTOR3, 255, 0);
-//		for(int i = 0; i < time; i++)
-//		{
-//			this.r.sleep(1000);
-//		}
-//		this.r.runMotor(RXTXRobot.MOTOR3, 0, 0);
+		// Run loop for time needed to add 80% of calculated value
+		this.r.runMotor(RXTXRobot.MOTOR3, 255, 0);
+		for(int i = 0; i < time; i++)
+		{
+			r.sleep(1000);
+		}
+		r.runMotor(RXTXRobot.MOTOR3, 0, 0);
 		
 		// Loops while the pH is not neutral
-		while(this.pH < 7.0 || this.pH > 7.5)
+		while(pH < 7.0 || pH > 7.5)
 		{
-			this.r.runMotor(RXTXRobot.MOTOR3, 255, 0);
-            this.r.sleep(5000);
-            this.r.runMotor(RXTXRobot.MOTOR3, 0, 0);
+			r.runMotor(RXTXRobot.MOTOR3, 255, 0);
+            r.sleep(5000);
+            r.runMotor(RXTXRobot.MOTOR3, 0, 0);
             
-			this.r.setMixerSpeed(mixSpeed);
-			this.r.runMixer(RXTXRobot.MOTOR4, 500);
-            this.r.stopMixer(RXTXRobot.MOTOR4);
+			r.setMixerSpeed(mixSpeed);
+			r.runMixer(RXTXRobot.MOTOR4, 500);
+            r.stopMixer(RXTXRobot.MOTOR4);
 		    
-		    this.pH = this.measurePH();
+		    pH = measurePH();
 		}
 	}
 
@@ -89,14 +86,14 @@ public class Remediator
 		// Loop until temperature stabilizes
 		while(true)
 		{
-			this.r.refreshDigitalPins();
+			r.refreshDigitalPins();
 			notStable++;
 			
 			// If temperature has not stabilized after 100 iterations, break
 			if(notStable > 100)
 				break;
 			
-			if(this.r.getTemperature() == perm)
+			if(r.getTemperature() == perm)
 			{
 				count++;
 				if(count == 10)
@@ -104,10 +101,10 @@ public class Remediator
 			}
 			else
 			{
-				perm = this.r.getTemperature();
+				perm = r.getTemperature();
 				count = 0;
 			}
-			this.r.sleep(50);
+			r.sleep(50);
 		}
 		
 		// If temperature did not stabilize after 100 iterations, use weighted average
@@ -123,7 +120,7 @@ public class Remediator
 		double a = .1474;
 		double b = -118.3897;
 		double c = 23748.1467;
-		double y = this.findAverageValue(0);
+		double y = findAverageValue(0);
 //		c = c - y;
 //		int result = (int)((b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
 		
@@ -144,8 +141,8 @@ public class Remediator
 		double b = -.74155;
 		double R = 8.3145;
 		double F = 96485.339924;
-		double T = this.temperature + 273.15;
-		double y = this.findAverageValue(1);
+		double T = temperature + 273.15;
+		double y = findAverageValue(1);
 		
 		return -(((a * y + b) * F) / (R * T * 2.3));
 	}
@@ -163,8 +160,8 @@ public class Remediator
 			// Loop 50 times
 			for(int i = 0; i < 200; i++)
 			{
-				this.r.refreshDigitalPins();
-				y = this.r.getTemperature();
+				r.refreshDigitalPins();
+				y = r.getTemperature();
 				// If the list is does not contain value, add, else increment frequency
 				if(!list.contains(y))
 				{
@@ -176,7 +173,7 @@ public class Remediator
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				this.r.sleep(50);
+				r.sleep(50);
 			}
 			
 			int count = 0;
@@ -203,8 +200,8 @@ public class Remediator
 			// Loop 200 times
 			for(int i = 0; i < 200; i++)
 			{
-				this.r.refreshAnalogPins();
-				y = this.r.getAnalogPin(pinNum).getValue();
+				r.refreshAnalogPins();
+				y = r.getAnalogPin(pinNum).getValue();
 				
 				// If the list is does not contain value, add, else increment frequency
 				if(!list.contains(y))
@@ -217,7 +214,7 @@ public class Remediator
 					int index =	list.indexOf(y);
 					frequency.set(index, frequency.get(index)+1);
 				}
-				this.r.sleep(50);
+				r.sleep(50);
 			}
 			
 			int count = 0;
@@ -236,7 +233,7 @@ public class Remediator
 			}
 			y /= (double)count;
 		}
-		System.out.println(y);
+//		System.out.println(y);
 		return y;
 	}
 	
@@ -248,56 +245,56 @@ public class Remediator
 	{
 		// Below ground
 		// Robot needs to be about 29.2 cm away from the center of the water.
-		if(this.courseNumber == 1)
+		if(courseNumber == 1)
 		{
 			// Get the arm in the correct general location, the closer
 			//it gets to the water, the more slowly the arm will move
 			for(int i = 145; i > 20; i--)
 			{
-				this.r.moveServo(RXTXRobot.SERVO1, i);
-				this.r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
 				if(i > 90)
-					this.r.moveServo(RXTXRobot.SERVO2, i);
-					this.r.sleep(50);
+					r.moveServo(RXTXRobot.SERVO2, i);
+					r.sleep(50);
 			}		
 		}
 		// Ground
 		// Since the water is at ground level, there shouldn't be a need to take 
 		// multiple steps to angle the sensor perpendicularly over. However, the robot 
 		// needs to be 29.28 cm from the water in order for this to work.
-		if(this.courseNumber == 2)
+		if(courseNumber == 2)
 		{
 			// Get the arm in the correct general location, the closer
 			// it gets, the more slowly the arm will move
 			for(int i = 145; i > 40; i--)
 			{
-				this.r.moveServo(RXTXRobot.SERVO1, i);
-				this.r.sleep(50);
-				this.r.moveServo(RXTXRobot.SERVO2, i);
-				this.r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO2, i);
+				r.sleep(50);
 			}
 		}
 		
 		// Above ground
-		if(this.courseNumber == 3)
+		if(courseNumber == 3)
 		{
 			// Get the arm in the correct general location, the closer
 			// it gets to the water, the more slowly the arm will move
 			for(int i = 145; i > 90; i--) 
 			{
 				// Moves main arm directly over the water, 66 degrees
-				this.r.moveBothServos(i, i); 
-				this.r.sleep(50);
+				r.moveBothServos(i, i); 
+				r.sleep(50);
 			}
 			for(int i = 90; i > 10; i--)
 			{
-				this.r.moveServo(RXTXRobot.SERVO2, i);
-				this.r.sleep(70);
+				r.moveServo(RXTXRobot.SERVO2, i);
+				r.sleep(70);
 			}
 			for(int i = 90; i > 75; i--)
 			{
-				this.r.moveServo(RXTXRobot.SERVO2, i);
-				this.r.sleep(70);
+				r.moveServo(RXTXRobot.SERVO2, i);
+				r.sleep(70);
 			}
 		}
 	}
@@ -312,48 +309,48 @@ public class Remediator
 			//Returns arm to 145, 145
 			for(int i = 20; i <= 145; i++)
 			{
-				this.r.moveServo(RXTXRobot.SERVO1, i);
-				this.r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
 				if(i > 90) 
 				{
-					this.r.moveServo(RXTXRobot.SERVO2, j);
-					this.r.sleep(50);
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
 					j++;
 				}
 			}	
 		}	
 		// Ground
-		if(this.courseNumber == 2)
+		if(courseNumber == 2)
 		{
 			int j;
 			j= 40;
 			//Returns package to 145, 145
 			for(int i = 20; i <= 145; i++)
 			{
-				this.r.moveServo(RXTXRobot.SERVO1, i);
-				this.r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
 				if(i > 40) 
 				{
-					this.r.moveServo(RXTXRobot.SERVO2, j);
-					this.r.sleep(50);
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
 					j++;
 				}
 			}
 		}
 		// Above ground
-		if(this.courseNumber == 3)
+		if(courseNumber == 3)
 		{
 			int j;
 			j= 10;
 			// Returns package to 145, 145
 			for(int i = 75; i <= 145; i++)
 			{
-				this.r.moveServo(RXTXRobot.SERVO1, i);
-				this.r.sleep(50);
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
 				if(i > 10) 
 				{
-					this.r.moveServo(RXTXRobot.SERVO2, j);
-					this.r.sleep(50);
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
 					j++;
 				}
 			}
