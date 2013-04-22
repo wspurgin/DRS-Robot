@@ -13,8 +13,9 @@ public class Navigator
 	private int bearing;
 	private final int width = 10;
 	private final int length = 10;
-	private final int EAST = 262;
-	
+	private final int EAST = 260;
+	private final int turns = 2350;
+
 	public Navigator(RXTXRobot r)
 	{
 		this.r = r;
@@ -23,11 +24,11 @@ public class Navigator
 		this.sensor.connect();
 		this.bumpSensorEngaged = false;
 		this.courseNumber = 1;
-		
+
 		// East is 1,
 		bearing = 1;
 	}
-	
+
 	// Receiving positive one means left turn, negative one right turn
 	public void orient(int direction)
 	{
@@ -63,14 +64,14 @@ public class Navigator
 			orient(direction);
 		}
 	}
-	
+
 	// Left if positive, right is negative
 	public void turn(int direction)
 	{
 		if(direction > 0)
 		{
-			r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, 255, 2472);
-			
+			r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, 255, turns);
+
 			// Change bearing
 			if(bearing == 1)
 				bearing = 4;
@@ -79,74 +80,45 @@ public class Navigator
 		}
 		else
 		{
-			r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, -255, 2472);
-			
+			r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, -255, turns);
+
 			// Change bearing
 			if(bearing == 4)
 				bearing = 1;
 			else
 				bearing++;
 		}
-		
 	}
-	
-<<<<<<< HEAD
-	// Runs the robot against whatever surface is pressing against it to straighten it out
-	private void straighten()
-	{
-		r.runMotor(RXTXRobot.MOTOR1, 120, RXTXRobot.MOTOR2, 130, 700);
-	}
-	
-	// Moves forward until bump sensor is triggered
-	public void moveForwardWithBumpSensor()
-	{
-		r.refreshAnalogPins();
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-		while(!readBumpSensor())
-		{
-			r.refreshAnalogPins();
-		}
-		straighten();
-		r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
-	}
-	
-	private void moveForwardWithPingSensor()
-	{
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-		while(r.getPing() < 20 && !readBumpSensor())
-		{
-			r.refreshAnalogPins();
-		}
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
-	}
-	
-	private void findWell()
-=======
+
 	// Sets robot up and calls findRFID()
 	public void setUp()
 	{
 		orient(EAST);
+		moveForwardWithBumpSensor();
+		turn(-1);
+		r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
 		findRFID();
 	}
-	
+
 	// Circles play field until RFID tag is found
 	public void findRFID()
 	{
 		System.out.println("Moving to RFID....");
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
+		r.refreshAnalogPins();
 		while(!sensor.hasTag())
 		{
 			if(this.readBumpSensor())
 			{
 				straighten();
-				r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
+				r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 150);
 				bumpSensorEngaged = true;
 				break;
 			}
 			r.refreshAnalogPins();
 		}
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-		
+
 		// You've hit a wall, turn and continue searching
 		if(bumpSensorEngaged)
 		{
@@ -156,7 +128,7 @@ public class Navigator
 			printBearing();
 			findRFID();
 		}
-		
+
 		// You've found the tag! Set course number appropriately
 		String tag = sensor.getTag();
 		if(tag.equals("6A003E4EA6BC"))
@@ -169,27 +141,27 @@ public class Navigator
 			System.out.println("ERROR: Invalid RFID tag " + tag);
 		sensor.close();
 	}
-	
+
 	// Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
 	public void goToWell()
 	{
 		if(courseNumber == 1)
 		{
 			int count = 0;
-			
+
 			if(bearing == 2)
 				count = 3;
 			else if(bearing == 3)
 				count = 2;
 			else if(bearing == 4)
 				count = 1;
-			
+
 			for(int i = 0; i < count; i++)
 			{
 				moveForwardWithBumpSensor();
 				turn(-1);
 			}
-			
+
 			moveForwardWithPingSensor();
 			turn(1);
 			r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
@@ -201,14 +173,14 @@ public class Navigator
 		else if(courseNumber == 2)
 		{
 			int count = 0;
-			
+
 			if(bearing == 2)
 				count = 2;
 			else if(bearing == 3)
 				count = 1;
 			else if(bearing == 4)
 				count = 0;
-			
+
 			for(int i = 0; i < count; i++)
 			{
 				moveForwardWithBumpSensor();
@@ -232,9 +204,8 @@ public class Navigator
 			findLowWell();
 		}
 	}
-	
+
 	public void findWell()
->>>>>>> 2f4d532981d1115a410f08e38f23b5edb80d5ca0
 	{
 		boolean object = false;
 		boolean lineSensor = false;
@@ -283,14 +254,14 @@ public class Navigator
 			findWell();
 		}
 	}
-	
+
 	public void findLowWell()
 	{
 		boolean lineSensor = false;
         
 		// Run forward unconditionally
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
-		
+
 	    // Run motors indefinitely
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
         
@@ -330,165 +301,7 @@ public class Navigator
 				moveIntoPosition();
 		}
 	}
-<<<<<<< HEAD
-	
-	//	Move the robot into appropriate position for remediation to begin.
-    //	Because the line sensor was activated when this method is called, we have to
-    //	assume that the well is in front of or behind us on our current bearing.
-	private void moveIntoPosition()
-	{
-        // This method needs to move to it's perpendicular position to put the Ping
-        // sensor in position.
-		turn(1);
-        // Reads for the  base distance from the Ping sensor.
-		int base = r.getPing();
-		int count = 0;
-		
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-		
-        // If the Ping sensor reads a significant spike in distances, we know that it returned
-        // the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
-		while((r.getPing() >= base - 2 && r.getPing() <= base + 2) && count != 25)
-		{
-			r.sleep(100);
-			count++;
-		}
-		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-		
-        // In the case that the Ping sensor had been engaged we move towards the object which
-        // should be the well.
-		if(!(r.getPing() >= base - 2 && r.getPing() <= base + 2))
-		{
-			turn(-1);
-			moveForwardWithBumpSensor();
-		}
-        // In the case that it went too long without reading a different value
-        // it calls it self recursively to locate the well behind it's original bearing
-		else if(count == 25)
-		{
-			// Make a 180 degree turn
-			turn(1);
-			turn(1);
-		}
-	}
-	
-	// Sets robot up and calls findRFID()
-	public void setUp()
-	{
-		orient(EAST);
-		moveForwardWithBumpSensor();
-		turn(-1);
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
-		findRFID();
-	}
-	
-	// Circles play field until RFID tag is found
-	public void findRFID()
-	{
-		System.out.println("Moving to RFID....");
-		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-		while(!sensor.hasTag())
-		{
-			if(this.readBumpSensor())
-			{
-				straighten();
-				r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 500);
-				bumpSensorEngaged = true;
-				break;
-			}
-			r.refreshAnalogPins();
-		}
-		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-		
-		// You've hit a wall, turn and continue searching
-		if(bumpSensorEngaged)
-		{
-			bumpSensorEngaged = false;
-			r.refreshAnalogPins();
-			turn(-1);
-			printBearing();
-			findRFID();
-		}
-		
-		// You've found the tag! Set course number appropriately
-		String tag = sensor.getTag();
-		if(tag.equals("6A003E4EA6BC"))
-			courseNumber = 1;
-		else if(tag.equals("6A003E834B9C"))
-			courseNumber = 2;
-		else if(tag.equals("6A003E6E477D"))
-			courseNumber = 3;
-		else
-			System.out.println("ERROR: Invalid RFID tag " + tag);
-		sensor.close();
-	}
-	
-	// Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
-	public void goToWell()
-	{
-		if(courseNumber == 1)
-		{
-			int count = 0;
-			
-			if(bearing == 2)
-				count = 3;
-			else if(bearing == 3)
-				count = 2;
-			else if(bearing == 4)
-				count = 1;
-			
-			for(int i = 0; i < count; i++)
-			{
-				moveForwardWithBumpSensor();
-				turn(-1);
-			}
-			
-			moveForwardWithPingSensor();
-			turn(1);
-			r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
-			turn(1);
-			moveForwardWithBumpSensor();
-			turn(-1);
-			findWell();
-		}
-		else if(courseNumber == 2)
-		{
-			int count = 0;
-			
-			if(bearing == 2)
-				count = 2;
-			else if(bearing == 3)
-				count = 1;
-			else if(bearing == 4)
-				count = 0;
-			
-			for(int i = 0; i < count; i++)
-			{
-				moveForwardWithBumpSensor();
-				turn(-1);
-			}
-			findWell();
-		}
-		else if(courseNumber == 3)
-		{
-			if(bearing == 2)
-			{
-				turn(1);
-				turn(1);
-				moveForwardWithBumpSensor();
-				turn(1);
-				moveForwardWithPingSensor();
-				turn(-1);
-				r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
-				turn(-1);
-			}
-			findLowWell();
-		}
-	}
-
-=======
     
->>>>>>> 2f4d532981d1115a410f08e38f23b5edb80d5ca0
 	//Takes robot back to other side of field
 	public void goHome()
 	{
@@ -497,11 +310,11 @@ public class Navigator
 			turn(1);
 			moveForwardWithBumpSensor();
 		}
-		
+
 		if(courseNumber == 1 || courseNumber == 3)
 		{
 			turn(1);
-			
+
 			r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
 			moveForwardWithPingSensor();
             
@@ -586,7 +399,7 @@ public class Navigator
 	{
 		return EAST;
 	}
-	
+
 	// Print out bearing
 	private void printBearing()
 	{
@@ -599,20 +412,20 @@ public class Navigator
 		else
 			System.out.println("NORTH");
 	}
-	
+
 	// Tests if bump sensor has been triggered
 	private boolean readBumpSensor()
 	{
 		if(r.getAnalogPin(2).getValue() == 0)
 			return true;
-		
+
 		return false;
 	}
-	
+
 	// Runs the robot against whatever surface is pressing against it to straighten it out
 	private void straighten()
 	{
-		r.runMotor(RXTXRobot.MOTOR1, 120, RXTXRobot.MOTOR2, 130, 700);
+		r.runMotor(RXTXRobot.MOTOR1, 120, RXTXRobot.MOTOR2, 130, 1500);
 	}
     
 	// Returns true if after looping tens times, at least three of the values were less than 800 (on white)
@@ -632,7 +445,7 @@ public class Navigator
         
 		return false;
 	}
-	
+
 	private void moveForwardWithPingSensor()
 	{
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
@@ -642,7 +455,7 @@ public class Navigator
 		}
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 1000);
 	}
-	
+
 	// Moves forward until bump sensor is triggered
 	private void moveForwardWithBumpSensor()
 	{
@@ -655,7 +468,7 @@ public class Navigator
 		straighten();
 		r.runMotor(RXTXRobot.MOTOR1, -235, RXTXRobot.MOTOR2, -255, 1000);
 	}
-	
+
 	//	Move the robot into appropriate position for remediation to begin.
     //	Because the line sensor was activated when this method is called, we have to
     //	assume that the well is in front of or behind us on our current bearing.
@@ -667,9 +480,9 @@ public class Navigator
         // Reads for the  base distance from the Ping sensor.
 		int base = r.getPing();
 		int count = 0;
-		
+
 		r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 255, 0);
-		
+
         // If the Ping sensor reads a significant spike in distances, we know that it returned
         // the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
 		while((r.getPing() >= base - 2 && r.getPing() <= base + 2) && count != 25)
@@ -678,7 +491,7 @@ public class Navigator
 			count++;
 		}
 		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-		
+
         // In the case that the Ping sensor had been engaged we move towards the object which
         // should be the well.
 		if(!(r.getPing() >= base - 2 && r.getPing() <= base + 2))
