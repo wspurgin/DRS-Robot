@@ -30,7 +30,7 @@ public class Navigator
 		this.courseNumber = 1;
 
 		// East is 1,
-		bearing = 1;
+		bearing = 2;
 	}
 
 	// Receiving positive one means left turn, negative one right turn
