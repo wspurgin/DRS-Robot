@@ -115,16 +115,14 @@ public class Remediator
 	}
 	
 	// Returns turbidity in NTU
-	public double measureTurbidity()
+	public int measureTurbidity()
 	{	
-		double a = .1474;
-		double b = -118.3897;
-		double c = 23748.1467;
-		double y = findAverageValue(0);
-//		c = c - y;
-//		int result = (int)((b + Math.sqrt(b * b - 4 * a * c)) / (2 * a));
+		double a = 0.0002;
+		double b = -.1775;
+		double c = 339.71;
+		double x = findAverageValue(0);
 		
-		int result = (int)(a * y * y + b * y + c);
+		int result = (int)((-b - Math.sqrt(b * b - 4 * a * (c - x)))/ (2 * a));
 		
 //		double a = -.0975;
 //		double b = 386.9245;
@@ -137,8 +135,8 @@ public class Remediator
 	// Returns the pH of a liquid
 	public double measurePH()
 	{
-		double a = 0.0006524;
-		double b = -.74155;
+		double a = 0.0006173;
+		double b = -.69853;
 		double R = 8.3145;
 		double F = 96485.339924;
 		double T = temperature + 273.15;
@@ -233,7 +231,7 @@ public class Remediator
 			}
 			y /= (double)count;
 		}
-//		System.out.println(y);
+		System.out.println(y);
 		return y;
 	}
 	
