@@ -14,8 +14,8 @@ public class Navigator
 	private final int width = 1011159;
 	private final int length = 2219578;
 	private final int EAST = 260;
-	private final int turns = 2330;
-	private final int m1 = 240;
+	private final int turns = 2600;
+	private final int m1 = 245;
 	private final int m2 = 255;
 	private final int platformDistance = 351090;
 	private final int rampedPlatformDistance = 924824;
@@ -30,12 +30,13 @@ public class Navigator
 		this.courseNumber = 1;
 
 		// East is 1,
-		bearing = 4;
+		bearing = 1;
 	}
 
 	// Receiving positive one means left turn, negative one right turn
 	public void orient(int direction)
 	{
+		System.out.println("Orienting...");
         // Takes priming read of the bump sensors. The Robot will move accordingly to
         // which bump sensor is engaged. Note that if for some reason the boolean
         // bumpSensorEngaged is true. The Robot will not turn
@@ -71,6 +72,7 @@ public class Navigator
 	// Left if positive, right is negative
 	public void turn(int direction)
 	{
+		System.out.println("Turning...");
 		if(direction > 0)
 		{
 			r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, m2, turns);
@@ -125,6 +127,7 @@ public class Navigator
 		// You've hit a wall, turn and continue searching
 		if(bumpSensorEngaged)
 		{
+			System.out.println("Bump sensor hit");
 			bumpSensorEngaged = false;
 			r.refreshAnalogPins();
 			turn(-1);
@@ -134,7 +137,7 @@ public class Navigator
 
 		// You've found the tag! Set course number appropriately
 		String tag = sensor.getTag();
-		if(tag.equals("6A003E4EA6BC"))
+		if(tag.equals("67007BBDB819"))
 			courseNumber = 1;
 		else if(tag.equals("6A003E834B9C"))
 			courseNumber = 2;
@@ -142,26 +145,30 @@ public class Navigator
 			courseNumber = 3;
 		else
 			System.out.println("ERROR: Invalid RFID tag " + tag);
-		sensor.close();
 	}
 
 	// Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
 	public void goToWell()
 	{
+		System.out.println("Going to well...");
 		if(courseNumber != 2)
 		{
 			while(bearing != 1)
 			{
 				turn(-1);
 			}
+			System.out.println("Get to East wall");
 			moveForwardWithBumpSensor();
 			turn(1);
 			moveForwardWithBumpSensor();
+			straighten();
 			turn(1);
+			System.out.println("Reached middle, move forward with ping sensor");
 			moveForwardWithPingSensor();
 			turn(-1);
 			if(courseNumber == 1)
 			{
+				System.out.println("On course one, move forward to far West wall");
 				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
 				turn(1);
 				moveForwardWithBumpSensor();
@@ -169,15 +176,19 @@ public class Navigator
 				findWell();
 			}
 			else if(courseNumber == 3)
+			{
+				System.out.println("On course three, move forward to far East wall");
 				//Move robot to the East wall
 				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
 				turn(-1);
 				moveForwardWithBumpSensor();
 				turn(1);
 				findLowWell();
+			}
 		}
 		if(courseNumber == 2)
 		{
+			System.out.println("On course two, move forward to far West wall");
 			while(bearing != 3)
 			{ 
 				turn(-1);
@@ -190,69 +201,35 @@ public class Navigator
 
 	public void findWell()
 	{
+		System.out.println("Finding well...");
 		r.refreshAnalogPins();
-		boolean object = false;
 		boolean lineSensor = false;
         
+		System.out.println("Prepare to traverse until bump hit or line found");
 		r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 		while(!readBumpSensor())
 		{
 			r.refreshAnalogPins();
-			object = false;
             
 			lineSensor = lineSensor();
 			if(lineSensor)
 				break;
-            
-//            if(bearing == 4)
-//            {
-//            	System.out.println("Hit object with bearing 4");
-//            	if(r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < length - 85631.8 * 2 && courseNumber == 2)
-//            		System.out.println("Course 2 N");
-//    				object = true;
-//    			if(r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < length / 2 - 85631.8 * 2 && courseNumber == 1)
-//    				System.out.println("Course 1 N");
-//    				object = true;
-//            }
-//            else
-//            {
-//            	if(r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < width - 85631.8 * 2 && courseNumber == 2)
-//            		System.out.println("Course 2 EW");
-//    				object = true;
-//    			if(r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < width / 2 - 85631.8 * 2 && courseNumber == 1)
-//    				System.out.println("Course 1 EW");
-//    				object = true;
-//            }
 		}
 		
 		if(lineSensor)
 		{
 			r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-			System.out.println("HERE");
-			return;
-			//alignToWell();
+			System.out.println("Line Sensor Triggered");
+			alignToWell();
 		}
 		
 		straighten();
 		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
        
-		
-		if(object)
+		if(bearing == 1)
 		{
-			System.out.println("Found object, going");
-			turn(-1);
-			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
-			turn(1);
-			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
-			turn(1);
-			moveForwardWithBumpSensor();
-			turn(-1);
-			findWell();
-		}
-		else if(bearing == 1)
-		{
-			System.out.println("No object, going E, turn W");
+			System.out.println("Going E, turn W");
 			turn(-1);
 			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 3000);
 			turn(-1);
@@ -260,7 +237,7 @@ public class Navigator
 		}
 		else if(bearing == 3)
 		{
-			System.out.println("No object, going W, turn E");
+			System.out.println("Going W, turn E");
 			turn(1);
 			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 3000);
 			turn(1);
@@ -268,7 +245,7 @@ public class Navigator
 		}
 		else if(bearing == 4)
 		{
-			System.out.println("No object, going N, turn E");
+			System.out.println("Going N, turn E");
 			turn(-1);
 			findWell();
 		}
@@ -276,11 +253,13 @@ public class Navigator
 
 	public void findLowWell()
 	{
+		System.out.println("Finding low well...");
 		boolean lineSensor = false;
 
 	    // Run motors indefinitely
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
         
+		System.out.println("Prepare to move forward with ping");
 		// Loop while close to the wall, break if either line sensor or bump sensors are triggered
 		while(r.getPing() < 20)
 		{
@@ -303,6 +282,7 @@ public class Navigator
 			// If the bump sensor was triggered, turn to avoid either an obstacle or a wall
 			if(bumpSensorEngaged)
 			{
+				System.out.println("Bump sensor hit, turning ");
 				bumpSensorEngaged = false;
 				straighten();
 				r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
@@ -312,6 +292,7 @@ public class Navigator
 		    // Turn back from whence you came (the ping sensor was over-distanced)
 			else if(!lineSensor)
 			{
+				System.out.println("Ping sensor out of rang, go back from whence you came");
 				turn(-1);
 				moveForwardWithPingSensor();
 				turn(-1);
@@ -321,6 +302,7 @@ public class Navigator
 			}
 			// THE LINE SENSOR WAS TRIGGERED! You're at the well.
 			else
+				System.out.println("Line sensor triggered");
 				approachWell();
 	}
 
@@ -329,6 +311,7 @@ public class Navigator
     //	assume that the well is in front of or behind us on our current bearing.
 	public void alignToWell()
 	{
+		System.out.println("Aligning to well...");
         // This method needs to move to it's perpendicular position to put the Ping
         // sensor in position.
 		turn(1);
@@ -351,6 +334,7 @@ public class Navigator
         // should be the well.
 		if(!(r.getPing() >= base - 2 && r.getPing() <= base + 2))
 		{
+			System.out.println("Found well, approach");
 			turn(-1);
 			approachWell();
 		}
@@ -358,6 +342,7 @@ public class Navigator
         // it calls it self recursively to locate the well behind it's original bearing
 		else if(count == 25)
 		{
+			System.out.println("Make 180 degree turn");
 			// Make a 180 degree turn
 			turn(1);
 			alignToWell();
@@ -366,8 +351,10 @@ public class Navigator
     
     public void approachWell()
     {
+    	System.out.println("Approaching well...");
     	if(courseNumber == 1)
     	{
+    		System.out.println("Moving forward for course 1");
 	    	this.r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 2500);
 	    	moveForwardWithLineSensor();
 	    	this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
@@ -380,11 +367,13 @@ public class Navigator
     	}
     	else if(courseNumber == 2)
     	{
+    		System.out.println("Moving forward for course 2");
     		moveForwardWithBumpSensor();
     		straighten();
     	}
     	else if(courseNumber == 3)
     	{
+    		System.out.println("Moving forward for course 3");
     		this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.rampedPlatformDistance - 59942)
@@ -392,12 +381,17 @@ public class Navigator
 	    		r.sleep(50);
 	    	}
 	    	this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+	    	
+	    	this.r.runMotor(RXTXRobot.MOTOR1, 235, RXTXRobot.MOTOR2, 0, 250);
     	}
+    	
+    	System.out.println("Arrived at well-- Time to remediate!");
     }
 
     //Takes robot back to other side of field
 	public void goHome()
 	{
+		System.out.println("Going home...");
 		while(bearing != 3)
 		{
 			turn(1);
@@ -524,7 +518,7 @@ public class Navigator
 		for(int i = 0; i < 10; i++)
 		{
 			// Increment count, line sensor returning low values
-			if(r.getAnalogPin(3).getValue() < 700)
+			if(r.getAnalogPin(3).getValue() < 750)
 				count++;
 			// On the white, return true
 			if(count >= 3)
@@ -536,8 +530,9 @@ public class Navigator
 
 	private void moveForwardWithPingSensor()
 	{
+		System.out.println("Moving forward with line sensor...");
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
-		while(r.getPing() < 20 && !readBumpSensor())
+		while(r.getPing() < 40 && !readBumpSensor())
 		{
 			r.refreshAnalogPins();
 		}
@@ -547,6 +542,7 @@ public class Navigator
 	// Moves forward until bump sensor is triggered
 	private void moveForwardWithBumpSensor()
 	{
+		System.out.println("Moving forward with bump sensor...");
 		r.refreshAnalogPins();
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 		while(!readBumpSensor())
@@ -554,10 +550,11 @@ public class Navigator
 			r.refreshAnalogPins();
 		}
 		straighten();
-		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
+		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 700);
 	}
 	private void moveForwardWithLineSensor()
 	{
+		System.out.println("Moving forward with line sensor...");
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 		while(!lineSensor())
 		{
