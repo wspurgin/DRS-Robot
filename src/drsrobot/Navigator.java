@@ -15,9 +15,10 @@ public class Navigator
 	private final int length = 2219578;
 	private final int EAST = 260;
 	private final int turns = 2550;
-	private final int m1 = 245;
+	private final int m1 = 240;
 	private final int m2 = 255;
 	private final int platformDistance = 351090;
+	private final int raisedPlatformDistance = 924824;
 
 	public Navigator(RXTXRobot r)
 	{
@@ -178,7 +179,7 @@ public class Navigator
 			{
 				System.out.println("On course three, move forward to far East wall");
 				//Move robot to the East wall
-				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 3000);
+				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 4000);
 				turn(-1);
 				moveForwardWithBumpSensor();
 				turn(1);
@@ -336,7 +337,7 @@ public class Navigator
 	    	moveForwardWithLineSensor();
 	    	this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
-	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.platformDistance - 59942)
+	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.raisedPlatformDistance - 59942)
 	    	{
 	    		r.sleep(50);
 	    	}
