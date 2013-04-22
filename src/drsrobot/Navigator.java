@@ -137,10 +137,13 @@ public class Navigator
 
 		// You've found the tag! Set course number appropriately
 		String tag = sensor.getTag();
+		//Fish Town, maze, ground well
 		if(tag.equals("67007BBDB819"))
 			courseNumber = 1;
+		//Dadaab, high bar, above ground well
 		else if(tag.equals("6A003E834B9C"))
 			courseNumber = 2;
+		//Ali Ade, wall, below ground well
 		else if(tag.equals("6A003E6E477D"))
 			courseNumber = 3;
 		else
@@ -221,6 +224,7 @@ public class Navigator
 			r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
 			System.out.println("Line Sensor Triggered");
 			alignToWell();
+			return;
 		}
 
 		straighten();
@@ -267,7 +271,7 @@ public class Navigator
 		r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
             
 		// If the bump sensor was triggered, turn to avoid either an obstacle or a wall
-		if(bumpSensorEngaged)
+		if(readBumpSensor())
 		{
 			System.out.println("Bump sensor hit");
 			bumpSensorEngaged = false;
@@ -337,7 +341,7 @@ public class Navigator
 	    	moveForwardWithLineSensor();
 	    	this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
-	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.raisedPlatformDistance - 59942)
+	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.platformDistance - 59942)
 	    	{
 	    		r.sleep(50);
 	    	}
@@ -354,7 +358,7 @@ public class Navigator
     		System.out.println("Moving forward for course 3");
     		this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
 	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
-	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.platformDistance - 70000)
+	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.raisedPlatformDistance - 70000)
 	    	{
 	    		r.sleep(50);
 	    	}
@@ -387,9 +391,6 @@ public class Navigator
 		{
 			turn(1);
 			moveForwardWithPingSensor();
-			// The robot will "travel" a bit as it turns allowing it to move a little forward.
-			// This way (since the Ping sensor is in the middle on the right of the
-			// robot) we will move completely through the gap.
 			turn(-1);
 			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 10000);
 		}
