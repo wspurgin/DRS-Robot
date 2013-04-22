@@ -16,7 +16,6 @@ public class Remediator
 	{
 		// Initialize robot
 		this.r = r;
-		this.r.moveBothServos(145, 145);
 		
 		this.courseNumber = courseNumber;
 		
@@ -241,13 +240,48 @@ public class Remediator
 	// changed here, change it in the removeSensors() method, too.
 	public void moveSensor()
 	{
-		// Below ground
-		// Robot needs to be about 29.2 cm away from the center of the water.
+		// Ground
+		// Since the water is at ground level, there shouldn't be a need to take 
+		// multiple steps to angle the sensor perpendicularly over. However, the robot 
+		// needs to be 29.28 cm from the water in order for this to work.
 		if(courseNumber == 1)
 		{
 			// Get the arm in the correct general location, the closer
+			// it gets, the more slowly the arm will move
+			for(int i = 120; i > 40; i--)
+			{
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
+				if(i <= 90 && i > 65)
+					r.moveServo(RXTXRobot.SERVO2, i);
+					r.sleep(50);
+			}
+		}
+		
+		// Above ground
+		if(courseNumber == 2)
+		{
+			for(int i = 120; i < 110; i++)
+			{
+				r.moveServo(RXTXRobot.SERVO1, i);
+			}
+			for(int i = 90; i >= 50; i--)
+			{
+				r.moveServo(RXTXRobot.SERVO2, i);
+			}
+			for(int i = 110; i >= 90; i--)
+			{
+				r.moveServo(RXTXRobot.SERVO1, i);
+			}
+		}
+		
+		// Below ground
+		// Robot needs to be about 29.2 cm away from the center of the water.
+		if(courseNumber == 3)
+		{
+			// Get the arm in the correct general location, the closer
 			//it gets to the water, the more slowly the arm will move
-			for(int i = 145; i > 20; i--)
+			for(int i = 120; i > 20; i--)
 			{
 				r.moveServo(RXTXRobot.SERVO1, i);
 				r.sleep(50);
@@ -256,102 +290,62 @@ public class Remediator
 					r.sleep(50);
 			}		
 		}
-		// Ground
-		// Since the water is at ground level, there shouldn't be a need to take 
-		// multiple steps to angle the sensor perpendicularly over. However, the robot 
-		// needs to be 29.28 cm from the water in order for this to work.
-		if(courseNumber == 2)
-		{
-			// Get the arm in the correct general location, the closer
-			// it gets, the more slowly the arm will move
-			for(int i = 145; i > 40; i--)
-			{
-				r.moveServo(RXTXRobot.SERVO1, i);
-				r.sleep(50);
-				r.moveServo(RXTXRobot.SERVO2, i);
-				r.sleep(50);
-			}
-		}
-		
-		// Above ground
-		if(courseNumber == 3)
-		{
-			// Get the arm in the correct general location, the closer
-			// it gets to the water, the more slowly the arm will move
-			for(int i = 145; i > 90; i--) 
-			{
-				// Moves main arm directly over the water, 66 degrees
-				r.moveBothServos(i, i); 
-				r.sleep(50);
-			}
-			for(int i = 90; i > 10; i--)
-			{
-				r.moveServo(RXTXRobot.SERVO2, i);
-				r.sleep(70);
-			}
-			for(int i = 90; i > 75; i--)
-			{
-				r.moveServo(RXTXRobot.SERVO2, i);
-				r.sleep(70);
-			}
-		}
 	}
 	
 	// Removes the sensors from the water (reverse of moveSensor() method)
 	public void removeSensor()
 	{
-		if(this.courseNumber == 1)
-		{
-			int j;
-			j= 90;
-			//Returns arm to 145, 145
-			for(int i = 20; i <= 145; i++)
-			{
-				r.moveServo(RXTXRobot.SERVO1, i);
-				r.sleep(50);
-				if(i > 90) 
-				{
-					r.moveServo(RXTXRobot.SERVO2, j);
-					r.sleep(50);
-					j++;
-				}
-			}	
-		}	
 		// Ground
-		if(courseNumber == 2)
+		if(courseNumber == 1)
 		{
-			int j;
-			j= 40;
+			int j = 65;
 			//Returns package to 145, 145
-			for(int i = 20; i <= 145; i++)
+			for(int i = 40; i <= 120; i++)
 			{
 				r.moveServo(RXTXRobot.SERVO1, i);
 				r.sleep(50);
-				if(i > 40) 
+				if(j > 20) 
 				{
 					r.moveServo(RXTXRobot.SERVO2, j);
 					r.sleep(50);
-					j++;
+					j--;
 				}
 			}
 		}
 		// Above ground
-		if(courseNumber == 3)
+		if(courseNumber == 2)
 		{
-			int j;
-			j= 10;
-			// Returns package to 145, 145
-			for(int i = 75; i <= 145; i++)
+			int j = 50;
+			// Returns package
+			for(int i = 90; i <= 120; i++)
 			{
 				r.moveServo(RXTXRobot.SERVO1, i);
 				r.sleep(50);
-				if(i > 10) 
+				if(j > 20) 
 				{
 					r.moveServo(RXTXRobot.SERVO2, j);
 					r.sleep(50);
-					j++;
+					j--;
 				}
 			}
 		}
+		
+		// Below Ground
+		if(this.courseNumber == 3)
+		{
+			int j = 90;
+			//Returns arm to 145, 145
+			for(int i = 20; i <= 120; i++)
+			{
+				r.moveServo(RXTXRobot.SERVO1, i);
+				r.sleep(50);
+				if(i > 50 && j >= 20) 
+				{
+					r.moveServo(RXTXRobot.SERVO2, j);
+					r.sleep(50);
+					j--;
+				}
+			}	
+		}	
 	}
 }
