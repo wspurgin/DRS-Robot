@@ -28,7 +28,12 @@ public class DRSRobot
 		remediator.moveSensor();
 		remediator.test();
 		remediator.removeSensor();
-        
+		System.out.println("Do you want to go home?");
+        String temp;
+        Scanner s = new Scanner(System.in);
+        temp = s.nextLine();
+        if(temp.toLowerCase().equals("no"))
+        	System.out.println("Too bad we're going home anyway.");
         n.goHome();
 	}
 	public void close()

@@ -17,6 +17,8 @@ public class Navigator
 	private final int turns = 2330;
 	private final int m1 = 240;
 	private final int m2 = 255;
+	private final int platformDistance = 351090;
+	private final int rampedPlatformDistance = 924824;
 
 	public Navigator(RXTXRobot r)
 	{
@@ -42,8 +44,7 @@ public class Navigator
 		else if(readBumpSensor())
 		{
 			r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 100);
-			if(readBumpSensor())
-				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 200);
+			r.refreshAnalogPins();
             orient(direction);
 		}
 		else
@@ -147,63 +148,43 @@ public class Navigator
 	// Recursively calls to follow the wall and avoid obstacles until line sensor senses white line
 	public void goToWell()
 	{
-		if(courseNumber == 1)
+		if(courseNumber != 2)
 		{
-			int count = 0;
-
-			if(bearing == 2)
-				count = 3;
-			else if(bearing == 3)
-				count = 2;
-			else if(bearing == 4)
-				count = 1;
-
-			for(int i = 0; i < count; i++)
+			while(bearing != 1)
 			{
-				moveForwardWithBumpSensor();
 				turn(-1);
 			}
-
+			moveForwardWithBumpSensor();
+			turn(1);
+			moveForwardWithBumpSensor();
+			turn(1);
 			moveForwardWithPingSensor();
-			turn(1);
-			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
-			turn(1);
+			turn(-1);
+			if(courseNumber == 1)
+			{
+				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
+				turn(1);
+				moveForwardWithBumpSensor();
+				turn(-1);
+				findWell();
+			}
+			else if(courseNumber == 3)
+				//Move robot to the East wall
+				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
+				turn(-1);
+				moveForwardWithBumpSensor();
+				turn(1);
+				findLowWell();
+		}
+		if(courseNumber == 2)
+		{
+			while(bearing != 3)
+			{ 
+				turn(-1);
+			}
 			moveForwardWithBumpSensor();
 			turn(-1);
 			findWell();
-		}
-		else if(courseNumber == 2)
-		{
-			int count = 0;
-
-			if(bearing == 2)
-				count = 2;
-			else if(bearing == 3)
-				count = 1;
-			else if(bearing == 4)
-				count = 0;
-
-			for(int i = 0; i < count; i++)
-			{
-				moveForwardWithBumpSensor();
-				turn(-1);
-			}
-			findWell();
-		}
-		else if(courseNumber == 3)
-		{
-			if(bearing == 2)
-			{
-				turn(1);
-				turn(1);
-				moveForwardWithBumpSensor();
-				turn(1);
-				moveForwardWithPingSensor();
-				turn(-1);
-				r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
-				turn(-1);
-			}
-			findLowWell();
 		}
 	}
 
@@ -250,7 +231,7 @@ public class Navigator
 			r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
 			System.out.println("HERE");
 			return;
-			//moveIntoPosition();
+			//alignToWell();
 		}
 		
 		straighten();
@@ -296,9 +277,6 @@ public class Navigator
 	public void findLowWell()
 	{
 		boolean lineSensor = false;
-        
-		// Run forward unconditionally
-		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 1000);
 
 	    // Run motors indefinitely
 		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
@@ -315,12 +293,10 @@ public class Navigator
 			// Back up and break if bump sensor triggered
 			if(readBumpSensor())
 			{
-				straighten();
-				r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 2000);
 				bumpSensorEngaged = true;
 				break;
 			}
-            
+        }
 			// Turn off motors
 			r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
             
@@ -328,46 +304,119 @@ public class Navigator
 			if(bumpSensorEngaged)
 			{
 				bumpSensorEngaged = false;
-				turn(-1);
-				goToWell();
+				straighten();
+				r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
+				turn(1);
+				findLowWell();
 			}
 		    // Turn back from whence you came (the ping sensor was over-distanced)
 			else if(!lineSensor)
+			{
+				turn(-1);
+				moveForwardWithPingSensor();
+				turn(-1);
+				moveForwardWithBumpSensor();
 				turn(1);
+				findLowWell();
+			}
 			// THE LINE SENSOR WAS TRIGGERED! You're at the well.
 			else
-				moveIntoPosition();
+				approachWell();
+	}
+
+	//	Move the robot into appropriate position for remediation to begin.
+    //	Because the line sensor was activated when this method is called, we have to
+    //	assume that the well is in front of or behind us on our current bearing.
+	public void alignToWell()
+	{
+        // This method needs to move to it's perpendicular position to put the Ping
+        // sensor in position.
+		turn(1);
+        // Reads for the  base distance from the Ping sensor.
+		int base = r.getPing();
+		int count = 0;
+
+		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
+
+        // If the Ping sensor reads a significant spike in distances, we know that it returned
+        // the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
+		while((r.getPing() >= base - 2 && r.getPing() <= base + 2) && count != 25)
+		{
+			r.sleep(100);
+			count++;
+		}
+		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+
+        // In the case that the Ping sensor had been engaged we move towards the object which
+        // should be the well.
+		if(!(r.getPing() >= base - 2 && r.getPing() <= base + 2))
+		{
+			turn(-1);
+			approachWell();
+		}
+        // In the case that it went too long without reading a different value
+        // it calls it self recursively to locate the well behind it's original bearing
+		else if(count == 25)
+		{
+			// Make a 180 degree turn
+			turn(1);
+			alignToWell();
 		}
 	}
     
-	//Takes robot back to other side of field
+    public void approachWell()
+    {
+    	if(courseNumber == 1)
+    	{
+	    	this.r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 2500);
+	    	this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
+	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
+	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.platformDistance - 59942)
+	    	{
+	    		r.sleep(50);
+	    	}
+	    	this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+    	}
+    	else if(courseNumber == 2)
+    	{
+    		moveForwardWithBumpSensor();
+    		straighten();
+    	}
+    	else if(courseNumber == 3)
+    	{
+    		this.r.resetEncodedMotorPosition(RXTXRobot.MOTOR1);
+	    	this.r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
+	    	while(this.r.getEncodedMotorPosition(RXTXRobot.MOTOR1) < this.rampedPlatformDistance - 59942)
+	    	{
+	    		r.sleep(50);
+	    	}
+	    	this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
+    	}
+    }
+
+    //Takes robot back to other side of field
 	public void goHome()
 	{
-		while(bearing != 2)
+		while(bearing != 3)
 		{
 			turn(1);
-			moveForwardWithBumpSensor();
 		}
-
+		moveForwardWithBumpSensor();
+		turn(1);
+		moveForwardWithBumpSensor();
 		if(courseNumber == 1 || courseNumber == 3)
 		{
 			turn(1);
-
-			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
 			moveForwardWithPingSensor();
-            
 			// The robot will "travel" a bit as it turns allowing it to move a little forward.
 			// This way (since the Ping sensor is in the middle on the right of the
 			// robot) we will move completely through the gap.
-			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, 0, 10000);
+			turn(-1);
 			r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 10000);
 		}
-		else if(courseNumber == 2)
-		{
-			moveForwardWithBumpSensor();
-		}
+		System.out.println("We made it! DRS! DRS! DRS! WOOOOO!");
 	}
-    
+
 	public RXTXRobot getR()
 	{
 		return r;
@@ -505,45 +554,5 @@ public class Navigator
 		}
 		straighten();
 		r.runMotor(RXTXRobot.MOTOR1, -m1, RXTXRobot.MOTOR2, -m2, 1000);
-	}
-
-	//	Move the robot into appropriate position for remediation to begin.
-    //	Because the line sensor was activated when this method is called, we have to
-    //	assume that the well is in front of or behind us on our current bearing.
-	private void moveIntoPosition()
-	{
-        // This method needs to move to it's perpendicular position to put the Ping
-        // sensor in position.
-		turn(1);
-        // Reads for the  base distance from the Ping sensor.
-		int base = r.getPing();
-		int count = 0;
-
-		r.runMotor(RXTXRobot.MOTOR1, m1, RXTXRobot.MOTOR2, m2, 0);
-
-        // If the Ping sensor reads a significant spike in distances, we know that it returned
-        // the distance to the well. Otherwise, it has gone too far (should run for approx. 3 sec)
-		while((r.getPing() >= base - 2 && r.getPing() <= base + 2) && count != 25)
-		{
-			r.sleep(100);
-			count++;
-		}
-		this.r.runMotor(RXTXRobot.MOTOR1, 0, RXTXRobot.MOTOR2, 0, 0);
-
-        // In the case that the Ping sensor had been engaged we move towards the object which
-        // should be the well.
-		if(!(r.getPing() >= base - 2 && r.getPing() <= base + 2))
-		{
-			turn(-1);
-			moveForwardWithBumpSensor();
-		}
-        // In the case that it went too long without reading a different value
-        // it calls it self recursively to locate the well behind it's original bearing
-		else if(count == 25)
-		{
-			// Make a 180 degree turn
-			turn(1);
-			turn(1);
-		}
 	}
 }
