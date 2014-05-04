@@ -1,0 +1,34 @@
+{
+	"recipe_id":3,
+	"ingredients":[
+		{
+			"amount":"6",
+			"unit":"",
+			"name":"Frozen Skinless, Boneless Chicken Breat Halves"
+		},
+		{
+			"amount":"12",
+			"unit":"Ounces",
+			"name":"Barbecue Sauce"
+		},
+		{
+			"amount":".5",
+			"unit":"Cups",
+			"name":"Italian Salad Dressing"
+		},
+		{
+			"amount":".25",
+			"unit":"Cups",
+			"name":"Brown Sugar"
+		},
+		{
+			"amount":"2",
+			"unit":"Tablespoons",
+			"name":"Worcestershire Sauce"
+		}
+	],
+	"directions":[
+		"Place chicken in a slow cooker. In a bowl, mix the barbecue sauce, Italian salad dressing, brown sugar, and Worcestershire sauce. Pour over the chicken.",
+		"Cover, and cook 3 to 4 hours on High or 6 to 8 hours on Low."
+	]
+}

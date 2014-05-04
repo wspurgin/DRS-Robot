@@ -1,0 +1,45 @@
+{
+	"recipe_id":13,
+	"ingredients":[
+		{
+			"amount":"2",
+			"unit":"Cups",
+			"name":"All-Purpose Flour"
+		},
+		{
+			"amount":"1",
+			"unit":"Teaspoon",
+			"name":"Baking Soda"
+		},
+		{
+			"amount":".25",
+			"unit":"Teaspoon",
+			"name":"Salt"
+		},
+		{
+			"amount":".5",
+			"unit":"Cups",
+			"name":"Butter"
+		},
+		{
+			"amount":".75",
+			"unit":"Cups",
+			"name":"Brown Sugar"
+		},
+		{
+			"amount":"2",
+			"unit":"",
+			"name":"Eggs"
+		},
+		{
+			"amount":"2.33",
+			"unit":"Cups",
+			"name":"Mashed Overripe Bananas"
+		}
+	],
+	"directions":[
+		"Preheat oven to 350 degrees F (175 degrees C). Lightly grease a 9x5 inch loaf pan.",
+		"In a large bowl, combine flour, baking soda and salt. In a separate bowl, cream together butter and brown sugar. Stir in eggs and mashed bananas until well blended. Stir banana mixture into flour mixture; stir just to moisten. Pour batter into prepared loaf pan.",
+		"Bake in preheated oven for 60 to 65 minutes, until a toothpick inserted into center of the loaf comes out clean. Let bread cool in pan for 10 minutes, then turn out onto a wire rack."
+	]
+}

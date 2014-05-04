@@ -1,0 +1,39 @@
+{
+	"recipe_id":8,
+	"ingredients":[
+		{
+			"amount":"1",
+			"unit":"Cup",
+			"name":"Butter"
+		},
+		{
+			"amount":"2",
+			"unit":"Cups",
+			"name":"Graham Cracker Crumbs"
+		},
+		{
+			"amount":"2",
+			"unit":"Cups",
+			"name":"Powdered Sugar"
+		},
+		{
+			"amount":"1",
+			"unit":"Cup",
+			"name":"Peanut Butter"
+		},
+		{
+			"amount":"1.5",
+			"unit":"Cups",
+			"name":"Semisweet Chocolate Chips"
+		},
+		{
+			"amount":"4",
+			"unit":"Tablespoons",
+			"name":"Peanut Butter"
+		}
+	],
+	"directions":[
+		"In a medium bowl, mix together the butter or margarine, graham cracker crumbs, confectioners' sugar, and 1 cup peanut butter until well blended. Press evenly into the bottom of an ungreased 9x13 inch pan.",
+		"In a metal bowl over simmering water, or in the microwave, melt the chocolate chips with the peanut butter, stirring occasionally until smooth. Spread over the prepared crust. Refrigerate for at least one hour before cutting into squares."
+	]
+}

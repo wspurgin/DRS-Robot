@@ -1,0 +1,46 @@
+{
+	"recipe_id":10,
+	"ingredients":[
+		{
+			"amount":".75",
+			"unit":"Cups",
+			"name":"White Sugar"
+		},
+		{
+			"amount":"3",
+			"unit":"Tablespoons",
+			"name":"Cornstarch"
+		},
+		{
+			"amount":".25",
+			"unit":"Teaspoons",
+			"name":"Salt"
+		},
+		{
+			"amount":".5",
+			"unit":"Teaspoons",
+			"name":"Ground Cinnamon"
+		},
+		{
+			"amount":"4",
+			"unit":"Cups",
+			"name":"Blueberries"
+		},
+		{
+			"amount":"1",
+			"unit":"",
+			"name":"9-inch Double Crust"
+		},
+		{
+			"amount":"1",
+			"unit":"Tablespoon",
+			"name":"Butter"
+		}
+	],
+	"directions":[
+		"Preheat oven to 425 degrees F (220 degrees C).",
+		"Mix sugar, cornstarch, salt, and cinnamon, and sprinkle over blueberries.",
+		"Line pie dish with one pie crust. Pour berry mixture into the crust, and dot with butter. Cut remaining pastry into 1/2 - 3/4 inch wide strips, and make lattice top. Crimp and flute edges.",
+		"Bake pie on lower shelf of oven for about 50 minutes, or until crust is golden brown."
+	]
+}

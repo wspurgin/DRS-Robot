@@ -1,0 +1,70 @@
+{
+	"recipe_id":11,
+	"ingredients":[
+		{
+			"amount":"8",
+			"unit":"Ounces",
+			"name":"Cream Cheese"
+		},
+		{
+			"amount":".25",
+			"unit":"Cups",
+			"name":"Mayonnaise"
+		},
+		{
+			"amount":".25",
+			"unit":"Cups",
+			"name":"Parmesan Cheese"
+		},
+		{
+			"amount":".25",
+			"unit":"Cups",
+			"name":"Romano Cheese"
+		},
+		{
+			"amount":"1",
+			"unit":"",
+			"name":"Clove Garlic"
+		},
+		{
+			"amount":".5",
+			"unit":"Teaspoon",
+			"name":"Dried Basil"
+		},
+		{
+			"amount":".25",
+			"unit":"Teaspoon",
+			"name":"Garlic Salt"
+		},
+		{
+			"amount":"1",
+			"unit":"Teaspoon",
+			"name":"Salt"
+		},
+		{
+			"amount":"1",
+			"unit":"Teaspoon",
+			"name":"Pepper"
+		},
+		{
+			"amount":"14",
+			"unit":"Ounces",
+			"name":"Artichoke Hearts"
+		},
+		{
+			"amount":".5",
+			"unit":"Cups",
+			"name":"Frozen, Chopped Spinach"
+		},
+		{
+			"amount":".25",
+			"unit":"Cups",
+			"name":"Mozzarella Cheese"
+		}
+	],
+	"directions":[
+		"Preheat oven to 350 degrees F (175 degrees C). Lightly grease a small baking dish.",
+		"In a medium bowl, mix together cream cheese, mayonnaise, Parmesan cheese, Romano cheese, garlic, basil, garlic salt, salt and pepper. Gently stir in artichoke hearts and spinach.",
+		"Transfer the mixture to the prepared baking dish. Top with mozzarella cheese. Bake in the preheated oven 25 minutes, until bubbly and lightly browned."
+	]
+}
